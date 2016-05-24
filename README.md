@@ -20,7 +20,7 @@ To fully utilise instance hours stop/start schdeule should be set 5 minutes prio
 
 __BAD EXAMPLE__
 
-Scheduling instances to stop on an hour (runtime 9 hours): 
+Scheduling instances to stop on an hour (runtime 8 hours): 
 
 ```
 businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }
@@ -28,7 +28,7 @@ businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }
 
 __GOOD EXAMPLE__
 
-Scheduling instances to stop 5 minutes before the hour (runtime 8 hours 55 minutes): 
+Scheduling instances to stop 5 minutes before the hour (runtime 7 hours 55 minutes): 
 
 ```
 businessHours: { "start": "45 8 * * 1-5", "stop": "40 16 * * 1-5" }
