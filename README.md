@@ -55,7 +55,7 @@ zip -r ../ec2-powercycle-0.0.1.zip ./*.py lib/ README.md
 
 ## IAM policy
 
-When creating Lambda function you will be asked to associate IAM role with the the function.
+When creating Lambda function you will be asked to associate IAM role with the function.
 
 ### Creating Identity and Access Management (IAM) policy for Lambda function
   
