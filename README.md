@@ -32,7 +32,55 @@ pip install croniter -t lib/
 
 ### Creating zip archive
 
+The following command is run in the root of the ec2-powercycle repository.
+The command bundles ec2-powercycle business logic, its dependencies and the README.md which can be uploaded to Lambda or S3 bucket.   
+
 ```
 zip -r ../ec2-powercycle-0.0.1.zip ./*.py lib/ README.md
 ```
 
+## IAM policy
+
+When creating Lambda function you will be asked to associate AIM role with the the function.
+
+### Creating Identity and Access Management (IAM) policy for Lambda function
+  
+The following policy example enables Lambda function to access the following AWS services:
+
+  * S3 - Read access to S3 bucket to deploy new EC2-POWERCYCLE releases
+  * CloudFront - Full access to Amazon CloudFront for logging and job scheduling
+  * EC2 - Access to query status of instances and stop and start them
+  
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:*"
+            ],
+            "Resource": "arn:aws:logs:::*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:Describe*",
+                "ec2:StartInstances",
+                "ec2:StopInstances"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:Get*",
+                "s3:List*"
+            ],
+            "Resource": "arn:aws:s3:::com.ft.eu-west-1.ec2-powercycle"
+        }
+    ]
+}
+```
