@@ -14,9 +14,13 @@ Tag value is simple JSON document that describes start and stop schedule in [cro
 ```
 businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }
 ```
-NOTE: Stopping instances on an hour's mark may result in extra hour to be charged. 
+__NOTE__: 
+
+Stopping instances on an hour's mark may result in extra hour to be charged. 
 To fully utilise instance hours stop/start schdeule should be set 5 minutes prior to hour's mark.
-For example instead of setting schedule  _businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }_ 
+
+For example instead of setting schedule  _businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }_, 
+
 set it to stop instance 5 minutes earlier _businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }_
   
 
@@ -47,9 +51,9 @@ When creating Lambda function you will be asked to associate AIM role with the t
   
 The following policy example enables Lambda function to access the following AWS services:
 
-  * S3 - Read access to S3 bucket to deploy new EC2-POWERCYCLE releases
-  * CloudFront - Full access to Amazon CloudFront for logging and job scheduling
-  * EC2 - Access to query status of instances and stop and start them
+  * __S3__ - Read access to S3 bucket to deploy new EC2-POWERCYCLE releases
+  * __CloudFront__ - Full access to Amazon CloudFront for logging and job scheduling
+  * __EC2__ - Access to query status of instances and stop and start them
   
 ```
 {
