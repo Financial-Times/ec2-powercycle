@@ -31,7 +31,7 @@ __GOOD EXAMPLE__
 Scheduling instances to stop 5 minutes before the hour (runtime 7 hours 55 minutes): 
 
 ```
-businessHours: { "start": "45 8 * * 1-5", "stop": "40 16 * * 1-5" }
+businessHours: { "start": "0 9 * * 1-5", "stop": "55 16 * * 1-5" }
 ```
 
 ## Creating a Lambda Deployment Package
