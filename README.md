@@ -8,12 +8,17 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag_
 
 Lambda function looks for EC2 instances that has resource tag _businessHours_ attached to it.
 
-Tag value is simpel JSON document that describes start and stop time in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).
+Tag value is simple JSON document that describes start and stop schedule in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).
 
-### Example stop/start schedule: Mon - Fri, 8am - 5pm
+### Example stop/start schedule: Mon - Fri, 8.45am - 5.40pm
 ```
-businessHours: { "stop": "0 17 * * 1-5", "start": "0 8 * * 1-5" }
+businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }
 ```
+NOTE: Stopping instances on an hour's mark may result in extra hour to be charged. 
+To fully utilise instance hours stop/start schdeule should be set 5 minutes prior to hour's mark.
+For example instead of setting schedule  _businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }_ 
+set it to stop instance 5 minutes earlier _businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }_
+  
 
 ## Creating a Lambda Deployment Package
 
