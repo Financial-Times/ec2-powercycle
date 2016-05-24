@@ -13,15 +13,26 @@ Tag value is simple JSON document that describes start and stop schedule in [cro
 ```
 businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }
 ```
-__NOTE__: 
+#### NOTE
 
 Stopping instances on an hour's mark may result in extra hour to be charged. 
 To fully utilise instance hours stop/start schdeule should be set 5 minutes prior to hour's mark.
 
-For example instead of setting schedule  _businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }_, 
+__BAD EXAMPLE__
 
-set it to stop instance 5 minutes earlier _businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }_
-  
+Scheduling instances to stop on an hour (runtime 9 hours): 
+
+```
+businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }
+```
+
+__GOOD EXAMPLE__
+
+Scheduling instances to stop 5 minutes before the hour (runtime 8 hours 55 minutes): 
+
+```
+businessHours: { "start": "45 8 * * 1-5", "stop": "40 16 * * 1-5" }
+```
 
 ## Creating a Lambda Deployment Package
 
