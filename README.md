@@ -55,15 +55,15 @@ zip -r ../ec2-powercycle-0.0.1.zip ./*.py lib/ README.md
 
 ## IAM policy
 
-When creating Lambda function you will be asked to associate AIM role with the the function.
+When creating Lambda function you will be asked to associate IAM role with the the function.
 
 ### Creating Identity and Access Management (IAM) policy for Lambda function
   
 The following policy example enables Lambda function to access the following AWS services:
 
   * __S3__ - Read access to S3 bucket to deploy new EC2-POWERCYCLE releases
-  * __CloudFront__ - Full access to Amazon CloudFront for logging and job scheduling
-  * __EC2__ - Access to query status of instances and stop and start them
+  * __CloudWatch__ - Full access to Amazon CloudWatch for logging and job scheduling
+  * __EC2__ - Access to query instance status and stop/start instances
   
 ```
 {
