@@ -25,29 +25,9 @@ EC2-POWERCYCLE uses 3rd party library called [Croniter](https://github.com/kiork
 pip install croniter -t lib/
 ```
 
+### Creating zip archive
 
-
-And here's some code!
-
-```javascript
-$(function(){
-  $('div').html('I am a div.');
-});
 ```
+zip -r ../ec2-powercycle-0.0.1.zip ./*.py lib/ README.md
 ```
-### test
-Warning
-```
-### Warning
-This is [on GitHub](https://github.com/jbt/markdown-editor) so let me know if I've b0rked it somewhere.
 
-
-Props to Mr. Doob and his [code editor](http://mrdoob.com/projects/code-editor/), from which
-the inspiration to this, and some handy implementation hints, came.
-
-### Stuff used to make this:
-
- * [marked](https://github.com/chjj) for Markdown parsing
- * [CodeMirror](http://codemirror.net/) for the awesome syntax-highlighted editor
- * [highlight.js](http://softwaremaniacs.org/soft/highlight/en/) for syntax highlighting in output code blocks
- * [js-deflate](https://github.com/dankogai/js-deflate) for gzipping of data to make it fit in URLs
