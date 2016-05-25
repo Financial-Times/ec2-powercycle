@@ -78,7 +78,7 @@ sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
 -it ec2-powercycle:1
 ```
 
-Launching Docker image without environment variable will run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in interactive mode that propts user for AWS credentials. 
+Launching Docker image without environment variable will run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in interactive mode that prompts user for AWS credentials. 
 ```
 sudo docker run -it ec2-powercycle:1
 ```
