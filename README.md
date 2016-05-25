@@ -53,6 +53,37 @@ The command bundles ec2-powercycle business logic, its dependencies and the READ
 zip -r ../ec2-powercycle-0.0.1.zip ./*.py lib/ README.md
 ```
 
+## Build environment (Docker)
+
+This repository ships with [Dockerfile](https://github.com/Financial-Times/ec2-powercycle/blob/master/Dockerfile) that can be used for packaging and deployment automation. 
+
+### Building Docker image
+
+The following command is run in the root of the repository and it creates a Docker container called ec2-powercycle with tag value 1.
+```
+ sudo docker build -t ec2-powercycle:1 .
+```
+
+### Launching Docker image
+
+When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) that uploads ec2-powercycle.zip package into S3 bucket.
+
+To run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
+
+```
+sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
+--env "AWS_SECRET_ACCESS_KEY=<access_key_secret>" \
+--env "AWS_DEFAULT_REGION=<aws_region_for_s3_bucket>" \
+--env "AWS_S3_BUCKET=<s3_bucket_name>" \
+-it ec2-powercycle:1
+```
+
+Launching Docker image without environment variable will run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in interactive mode that propts user for AWS credentials. 
+```
+sudo docker run -it ec2-powercycle:1
+```
+
+
 ## IAM policy
 
 When creating Lambda function you will be asked to associate IAM role with the function.
