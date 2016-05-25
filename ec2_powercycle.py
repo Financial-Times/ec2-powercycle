@@ -41,7 +41,6 @@ def getDesiredState(json_string):
         
 
 def handler(event = False, context = False):
-    print 'Lambda job started'
     reservations = ec.describe_instances(
     Filters=[
     {'Name': 'tag:' + tag, 'Values': ['*'],
