@@ -40,7 +40,7 @@ def getDesiredState(json_string):
         return False
         
 
-def ec2_stop_start(event = False, context = False):    
+def handler(event = False, context = False):    
     reservations = ec.describe_instances(
     Filters=[
     {'Name': 'tag:' + tag, 'Values': ['*'],
