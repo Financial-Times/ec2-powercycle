@@ -106,8 +106,12 @@ The following policy example enables Lambda function to access the following AWS
         },
         {
             "Effect": "Allow",
+            "Action": "ec2:Describe*",
+            "Resource": "arn:aws:ec2:::instance/*"
+        },
+        {
+            "Effect": "Allow",
             "Action": [
-                "ec2:Describe*",
                 "ec2:StartInstances",
                 "ec2:StopInstances"
             ],
