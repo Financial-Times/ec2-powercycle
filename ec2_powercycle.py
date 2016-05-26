@@ -45,7 +45,9 @@ def handler(event = False, context = False):
     reservations = ec.describe_instances(
     Filters=[
     {'Name': 'tag:' + tag, 'Values': ['*'],
-    },]
+    },
+    {'Name': 'tag: environment', 'Values': ['t'],
+    }]
     ).get('Reservations', [])
     
     instances = sum(
