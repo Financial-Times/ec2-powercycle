@@ -16,7 +16,7 @@ Author: Jussi Heinonen
 Date: 24.5.2016
 URL: https://github.com/jussi-ft/ec2-powercycle
 '''
-tag = 'businessHours' # Set resource tag
+tag = 'ec2Powercycle' # Set resource tag
 dryrun = False # Set True to mock behaviour
 ec = boto3.client('ec2')
 startInstanceIds=[]

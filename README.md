@@ -5,13 +5,13 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 ## Creating resource tag
 
-Lambda function looks for EC2 instances that has resource tag _businessHours_ attached to it.
+Lambda function looks for EC2 instances that has resource tag _ec2Powewrcycle_ attached to it.
 
 Tag value is simple JSON document that describes start and stop schedule in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).
 
 ### Example stop/start schedule: Mon - Fri, 8.45am - 5.40pm
 ```
-businessHours: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }
+ec2Powercycle: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }
 ```
 #### NOTE
 
@@ -23,7 +23,7 @@ __BAD EXAMPLE__
 Scheduling instances to stop on an hour (runtime 8 hours): 
 
 ```
-businessHours: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }
+ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }
 ```
 
 __GOOD EXAMPLE__
@@ -31,7 +31,7 @@ __GOOD EXAMPLE__
 Scheduling instances to stop 5 minutes before the hour (runtime 7 hours 55 minutes): 
 
 ```
-businessHours: { "start": "0 9 * * 1-5", "stop": "55 16 * * 1-5" }
+ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "55 16 * * 1-5" }
 ```
 
 ## Creating a Lambda Deployment Package
@@ -92,9 +92,8 @@ When creating Lambda function you will be asked to associate IAM role with the f
   
 The following policy example enables Lambda function to access the following AWS services:
 
-  * __S3__ - Read access to S3 bucket to deploy new EC2-POWERCYCLE releases
   * __CloudWatch__ - Full access to Amazon CloudWatch for logging and job scheduling
-  * __EC2__ - Access to query instance status and stop/start instances
+  * __EC2__ - Access to query status and stop/start instances when resource tag ec2Powercycle is attached to the instance
   
 ```
 {
@@ -114,17 +113,14 @@ The following policy example enables Lambda function to access the following AWS
                 "ec2:StartInstances",
                 "ec2:StopInstances"
             ],
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/ec2Powercycle": "{"
+                }
+            },
             "Resource": [
                 "*"
             ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:Get*",
-                "s3:List*"
-            ],
-            "Resource": "arn:aws:s3:::com.ft.eu-west-1.ec2-powercycle"
         }
     ]
 }
