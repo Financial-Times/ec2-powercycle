@@ -93,7 +93,7 @@ When creating Lambda function you will be asked to associate IAM role with the f
 The following policy example enables Lambda function to access the following AWS services:
 
   * __CloudWatch__ - Full access to Amazon CloudWatch for logging and job scheduling
-  * __EC2__ - Access to query status and stop/start instances when resource tag ec2Powercycle is attached to the instance
+  * __EC2__ - Access to query status and stop/start instances when resource tag ec2Powercycle is attached to the instance and environment tag does not equal __p__ (p=production)
   
 ```
 {
@@ -101,9 +101,7 @@ The following policy example enables Lambda function to access the following AWS
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": [
-                "logs:*"
-            ],
+            "Action": "logs:*",
             "Resource": "arn:aws:logs:::*"
         },
         {
@@ -115,12 +113,13 @@ The following policy example enables Lambda function to access the following AWS
             ],
             "Condition": {
                 "StringLike": {
-                    "ec2:ResourceTag/ec2Powercycle": "{"
+                    "ec2:ResourceTag/ec2Powercycle": "*"
+                },
+                "StringNotEqualsIgnoreCase": {
+                    "ec2:ResourceTag/environment": "p"
                 }
             },
-            "Resource": [
-                "*"
-            ]
+            "Resource": "arn:aws:ec2:::instance/*"
         }
     ]
 }

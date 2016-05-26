@@ -26,15 +26,15 @@ def getDesiredState(json_string):
     base = datetime.now()        
     try:
         schedule=json.loads(json_string)
-        print 'Start schedule using croniter: ' + str(schedule['start'])
-        print 'Stop schedule using croniter: ' + str(schedule['stop'])
+        print 'Start schedule: ' + str(schedule['start'])
+        print 'Stop schedule: ' + str(schedule['stop'])
         starttime = croniter(schedule['start'], base)
         stoptime = croniter(schedule['stop'], base)
         if stoptime.get_prev(datetime) > starttime.get_prev(datetime):
-            print 'Stoptime event ' + str(stoptime.get_prev(datetime)) + ' is more recent than starttime event ' + str(starttime.get_prev(datetime)) + '. Instance should be stopped'
+            print 'Stop event ' + str(stoptime.get_prev(datetime)) + ' is more recent than start event ' + str(starttime.get_prev(datetime)) + '. Desired state: stopped'
             return 'stopped'
         else:
-            print 'Starttime event ' + str(starttime.get_prev(datetime)) + ' is more recent than stoptime event ' + str(stoptime.get_prev(datetime)) + '. Instance should be running'
+            print 'Start event ' + str(starttime.get_prev(datetime)) + ' is more recent than stop event ' + str(stoptime.get_prev(datetime)) + '. Desired state: running'
             return 'running'
     except Exception, e:        
         return False
