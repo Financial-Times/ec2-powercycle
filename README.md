@@ -101,7 +101,11 @@ The following policy example enables Lambda function to access the following AWS
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": "logs:*",
+            "Action": [
+                "logs:CreateLogGroup",
+                 "logs:CreateLogStream",
+                 "logs:PutLogEvents"
+            ],
             "Resource": "arn:aws:logs:::*"
         },
         {
