@@ -45,8 +45,6 @@ def handler(event = False, context = False):
     reservations = ec.describe_instances(
     Filters=[
     {'Name': 'tag:' + tag, 'Values': ['*'],
-    },
-    {'Name': 'tag: environment', 'Values': ['t'],
     }]
     ).get('Reservations', [])
     
@@ -55,9 +53,9 @@ def handler(event = False, context = False):
                 [i for i in r['Instances']]
                 for r in reservations
             ], [])
-    if str(len(instances)) > 1:
-        extension = 's'
-    print 'Found ' + str(len(instances)) + ' instance' + extension + ' with tag ' + tag
+    print 'Found ' + str(len(instances)) + ' instances with tag ' + tag
+    if len(instances) is 0:
+        sys.exit(0)
     print "InstanceIDs with tag " + tag + ':'
     for element in instances:
         print '\t * ' + str(element['InstanceId'])
@@ -106,8 +104,6 @@ def handler(event = False, context = False):
         manageInstance(startInstanceIds, 'start')
     if len(stopInstanceIds) > 0:
         manageInstance(stopInstanceIds, 'stop')
-    sys.exit(0)
-    
 
 def json_file_processor(fname):
     try:  
