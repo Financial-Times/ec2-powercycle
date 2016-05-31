@@ -133,7 +133,7 @@ The following policy example enables Lambda function to access the following AWS
 }
 ```
 
-## Setting up Lambda function
+## Lambda setup
 
 Once deployment package is in S3 bucket we can create a Lambda function and use CloudWatch to set the function to run periodically. 
 
