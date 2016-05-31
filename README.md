@@ -3,6 +3,14 @@
 _AWS Lambda function to stop and start EC2 instances based on resource tag using crontab-like expressions_
 
 
+### Table of Contents
+**[Creating resource tag](#Creating-resource-tag)**  
+**[Creating a Lambda Deployment Package](#Creating-a-Lambda-Deployment-Package)**  
+**[Build environment (Docker)](#tBuild-environment)**  
+**[IAM policy](#IAM-policy)**  
+**[Setting up Lambda function](#Setting-up-Lambda-function)**  
+
+
 ## Creating resource tag
 
 Lambda function looks for EC2 instances that has resource tag _ec2Powewrcycle_ attached to it.
@@ -133,7 +141,7 @@ The following policy example enables Lambda function to access the following AWS
 }
 ```
 
-## Lambda setup
+## Setting up Lambda function
 
 Once deployment package is in S3 bucket we can create a Lambda function and use CloudWatch to set the function to run periodically. 
 
@@ -163,3 +171,5 @@ Once deployment package is in S3 bucket we can create a Lambda function and use 
  * _Rule description:_ __optional description of the rule__
  * _Schedule expression:_ __rate(15 minutes)__
  5. Click _Submit_ to create schedule
+
+
