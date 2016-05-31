@@ -135,7 +135,7 @@ The following policy example enables Lambda function to access the following AWS
 
 ## Setting up Lambda function
 
-Once deployment is in S3 bucket we can create a Lambda function and use CloudWatch to set the function to run periodically. 
+Once deployment package is in S3 bucket we can create a Lambda function and use CloudWatch to set the function to run periodically. 
 
 ### Creating Lambda function
 
@@ -153,5 +153,13 @@ Once deployment is in S3 bucket we can create a Lambda function and use CloudWat
  8. Select the role that has the above IAM policy attached to it
  9. Click _Next_ and _Creat function_
   
+### Scheduling Lambda function
 
-
+ 1. In Lambda configuration menu opne the ec2Ppowermanage Lambda job
+ 2. Go to _Event sources_ tab
+ 3. Click _Add event source_
+ 4. Select _Event source type:_ __CloudWatchEvents - Schedule__ and provide the following details
+ * _Rule name:_ __whatever unique name__
+ * _Rule description:_ __optional description of the rule__
+ * _Schedule expression:_ __rate(15 minutes)__
+ 5. Click _Submit_ to create schedule
