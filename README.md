@@ -61,7 +61,7 @@ This repository ships with [Dockerfile](https://github.com/Financial-Times/ec2-p
 
 The following command is run in the root of the repository and it creates a Docker container called ec2-powercycle with tag value 1.
 ```
- sudo docker build -t ec2-powercycle:1 .
+ sudo docker build -t ec2powercycle .
 ```
 
 ### Launching Docker image
@@ -75,7 +75,7 @@ sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
 --env "AWS_SECRET_ACCESS_KEY=<access_key_secret>" \
 --env "AWS_DEFAULT_REGION=<aws_region_for_s3_bucket>" \
 --env "AWS_S3_BUCKET=<s3_bucket_name>" \
--it ec2-powercycle:1
+-it ec2powercycle
 ```
 
 Launching Docker image without environment variable will run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in interactive mode that prompts user for AWS credentials. 
@@ -132,3 +132,26 @@ The following policy example enables Lambda function to access the following AWS
     ]
 }
 ```
+
+## Setting up Lambda function
+
+Once deployment is in S3 bucket we can create a Lambda function and use CloudWatch to set the function to run periodically. 
+
+### Creating Lambda function
+
+ 1. Log on to AWS console and go to Lambda configuration menu
+ 2. Click _Create a Lambda function_ 
+ 3. In _Select blueprint_ menu click _Skip_ button
+ 4. on _Configure function_ page provide the following details
+ * Name*: Name of the Lambda function
+ * Description: Optional description of the function
+ * Runtime*: Python 2.7
+ 5. In _Lambda function code_ section select _Upload a file from Amazon S3_
+ 6. Paste the deployment package URL into field _S3 link URL_
+ * _S3 link URL_ can be found from Properties of ec2powercycle.zip package in S3 bucket
+ 7. In _Lambda function handler and role_ section set handler name _ec2_powercycle.handler_
+ 8. Select the role that has the above IAM policy attached to it
+ 9. Click _Next_ and _Creat function_
+  
+
+
