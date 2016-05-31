@@ -61,7 +61,7 @@ The command bundles ec2-powercycle business logic, its dependencies and the READ
 zip -r ../ec2-powercycle-0.0.1.zip ./*.py lib/ README.md
 ```
 
-## Build environment (Docker)
+## Build environment
 
 This repository ships with [Dockerfile](https://github.com/Financial-Times/ec2-powercycle/blob/master/Dockerfile) that can be used for packaging and deployment automation. 
 
