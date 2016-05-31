@@ -4,14 +4,14 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 
 ### Table of Contents
-**[Creating resource tag](#creating-resource-tag)**  
+**[Usage](#usage)**  
 **[Creating a Lambda Deployment Package](#creating-a-lambda-deployment-package)**  
 **[Build environment](#build-environment)**  
 **[IAM policy](#iam-policy)**  
 **[Setting up Lambda function](#setting-up-lambda-function)**  
 
 
-## Creating resource tag
+## Usage
 
 Lambda function looks for EC2 instances that has resource tag _ec2Powewrcycle_ attached to it.
 
