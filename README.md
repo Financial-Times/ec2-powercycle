@@ -103,15 +103,15 @@ The following policy example enables Lambda function to access the following AWS
             "Effect": "Allow",
             "Action": [
                 "logs:CreateLogGroup",
-                 "logs:CreateLogStream",
-                 "logs:PutLogEvents"
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
             ],
             "Resource": "arn:aws:logs:::*"
         },
         {
             "Effect": "Allow",
             "Action": "ec2:Describe*",
-            "Resource": "arn:aws:ec2:::instance/*"
+            "Resource": "*"
         },
         {
             "Effect": "Allow",
@@ -127,7 +127,7 @@ The following policy example enables Lambda function to access the following AWS
                     "ec2:ResourceTag/environment": "p"
                 }
             },
-            "Resource": "arn:aws:ec2:::instance/*"
+            "Resource": "arn:aws:ec2:*:*:instance/*"
         }
     ]
 }

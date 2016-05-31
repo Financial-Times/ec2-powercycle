@@ -17,7 +17,7 @@ Date: 24.5.2016
 URL: https://github.com/jussi-ft/ec2-powercycle
 '''
 tag = 'ec2Powercycle' # Set resource tag
-exclude_env_tag='p' # Value of the environment tag that should be excluded from powercycle  
+exclude_env_tags=['p'] # Value of the environment tags that should be excluded from powercycle  
 dryrun = False # Set True to mock behaviour
 ec = boto3.client('ec2')
 startInstanceIds=[]
@@ -42,6 +42,8 @@ def getDesiredState(json_string):
         
 
 def handler(event = False, context = False):
+    if len(exclude_env_tags) > 0:
+        print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
     reservations = ec.describe_instances(
     Filters=[
     {'Name': 'tag:' + tag, 'Values': ['*'],
@@ -78,7 +80,7 @@ def handler(event = False, context = False):
                 print 'Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag]
                 print 'Current status of instance is: ' +  str(instance['State']['Name']) + ' . Stopping instance.'
                 try:
-                    if resource_tags['environment'] in exclude_env_tag:
+                    if resource_tags['environment'] in exclude_env_tags:
                         print instance['InstanceId'] + ' has environment tag ' +  resource_tags['environment'] + ' . Excluding from powercycle.'
                     else:
                         stopInstanceIds.append(instance['InstanceId'])
@@ -88,7 +90,7 @@ def handler(event = False, context = False):
                 print 'Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag]
                 print 'Current status of instance is: ' +  str(instance['State']['Name']) + ' . Starting instance.'
                 try:
-                    if resource_tags['environment'] in exclude_env_tag:
+                    if resource_tags['environment'] in exclude_env_tags:
                         print instance['InstanceId'] + ' has environment tag ' +  resource_tags['environment'] + ' . Excluding from powercycle.'
                     else:
                         startInstanceIds.append(instance['InstanceId'])
