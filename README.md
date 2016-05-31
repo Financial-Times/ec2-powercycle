@@ -42,6 +42,13 @@ Scheduling instances to stop 5 minutes before the hour (runtime 7 hours 55 minut
 ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "55 16 * * 1-5" }
 ```
 
+## Running ec2Powercycle locally
+
+```
+cd /path/to/repository/python
+python -c "from ec2_powercycle import * ; handler()"
+```
+
 ## Creating a Lambda Deployment Package
 
 EC2-POWERCYCLE uses 3rd party library called [Croniter](https://github.com/kiorky/croniter) which must be installed before deployment package is created.
