@@ -74,15 +74,15 @@ The following command is run in the root of the repository and it creates a Dock
 
 ### Launching Docker image
 
-When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) that uploads ec2-powercycle.zip package into S3 bucket.
+When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [push-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lamnbda.sh) that pushes ec2-powercycle.zip package into Lambda.
 
-To run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
+To run [push-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
 
 ```
 sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
 --env "AWS_SECRET_ACCESS_KEY=<access_key_secret>" \
 --env "AWS_DEFAULT_REGION=<aws_region_for_s3_bucket>" \
---env "AWS_S3_BUCKET=<s3_bucket_name>" \
+--env "AWS_LAMBDA_FUNCTION=<lambda_function_name>" \
 -it ec2powercycle
 ```
 

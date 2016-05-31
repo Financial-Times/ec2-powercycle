@@ -5,4 +5,4 @@ RUN apk --update add py-pip gcc python-dev libffi-dev openssl-dev build-base bas
 
 ADD *.sh /
 
-CMD /bin/bash package.sh && /bin/bash post-to-s3.sh
+CMD /bin/bash package.sh && /bin/bash post-to-lambda.sh
