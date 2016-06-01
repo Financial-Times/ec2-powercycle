@@ -4,7 +4,8 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 
 ### Table of Contents
-**[Usage](#usage)**  
+**[Usage](#usage)**
+**[Testing and development](#testing-and-development)**  
 **[Creating a Lambda Deployment Package](#creating-a-lambda-deployment-package)**  
 **[Build environment](#build-environment)**  
 **[IAM policy](#iam-policy)**  
@@ -42,10 +43,17 @@ Scheduling instances to stop 5 minutes before the hour (runtime 7 hours 55 minut
 ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "55 16 * * 1-5" }
 ```
 
-## Running ec2Powercycle locally
+## Testing and development
+
+To run ec2Powercycle job local dev environment you need to install all dependencies such as boto3 and croniter. 
+Full list of dependencies can be found in the file [ec2_powercycle.py](https://github.com/Financial-Times/ec2-powercycle/blob/master/ec2_powercycle.py)
+
+You also need to set up AWS credetials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_DEFAULT_REGION) in order to interact with AWS API.
+
+To run the job first change to _python_ directory inside the repository, then call the hander() function.
 
 ```
-cd /path/to/repository/python
+cd _/path/to/repository/_python
 python -c "from ec2_powercycle import * ; handler()"
 ```
 
@@ -93,9 +101,9 @@ sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
 -it ec2powercycle
 ```
 
-Launching Docker image without environment variable will run [push-to-s3.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-s3.sh) in interactive mode that prompts user for AWS credentials. 
+Launching Docker image without environment variable will run [push-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in interactive mode that prompts user for AWS credentials. 
 ```
-sudo docker run -it ec2-powercycle:1
+sudo docker run -it ec2-powercycle
 ```
 
 
@@ -150,7 +158,7 @@ The following policy example enables Lambda function to access the following AWS
 
 ## Setting up Lambda function
 
-Once deployment package is in S3 bucket we can create a Lambda function and use CloudWatch to set the function to run periodically. 
+Once deployment package has been created we can create a Lambda function and use CloudWatch to set the function to run periodically. 
 
 ### Creating Lambda function
 
@@ -161,12 +169,10 @@ Once deployment package is in S3 bucket we can create a Lambda function and use 
  * Name*: Name of the Lambda function
  * Description: Optional description of the function
  * Runtime*: Python 2.7
- 5. In _Lambda function code_ section select _Upload a file from Amazon S3_
- 6. Paste the deployment package URL into field _S3 link URL_
- * _S3 link URL_ can be found from Properties of ec2powercycle.zip package in S3 bucket
- 7. In _Lambda function handler and role_ section set handler name _ec2_powercycle.handler_
- 8. Select the role that has the above IAM policy attached to it
- 9. Click _Next_ and _Creat function_
+ 5. In _Lambda function code_ section select _Upload a zip file_ to upload ec2powercycle.zip package to Lambda
+ 6. In _Lambda function handler and role_ section set handler name _ec2_powercycle.handler_
+ 7. Select the role that has the above IAM policy attached to it
+ 8. Click _Next_ and _Create function_
   
 ### Scheduling Lambda function
 
