@@ -5,25 +5,7 @@
 declare -A SETTINGS
 PACKAGE="ec2-powercycle.zip"
 
-function errorAndExit () {
-  echo -e "\e[31m$1\e[0m"
-  exit $2
-}
-
-function exportSettings () {
-  for key in "${!SETTINGS[@]}"; do
-    export ${key}=${SETTINGS[$key]}
-  done
-}
-
-function promptUser () {
-  echo -ne "\e[31m$1: \e[0m" 
-  read var
-  SETTINGS[${2}]="${var}"
-  if [[ -z "${SETTINGS[${2}]}" ]]; then
-    promptUser "${1}" "${2}"
-  fi
-}
+source functions.sh
 
 function verifyLambdaFunction () {
   aws lambda get-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} &>/dev/null || errorAndExit "Failed to access Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}. Function must be created before updating." 1

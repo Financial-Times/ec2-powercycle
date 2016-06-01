@@ -5,26 +5,8 @@
 declare -A SETTINGS
 PACKAGE="ec2-powercycle.zip"
 
-function errorAndExit () {
-  echo -e "\e[31m$1\e[0m"
-  exit $2
-}
-
-function exportSettings () {
-  for key in "${!SETTINGS[@]}"; do
-    export ${key}=${SETTINGS[$key]}
-  done
-}
-
-function promptUser () {
-  echo -ne "\e[31m$1: \e[0m" 
-  read var
-  SETTINGS[${2}]="${var}"
-  if [[ -z "${SETTINGS[${2}]}" ]]; then
-    promptUser "${1}" "${2}"
-  fi
-}
-
+source functions.sh
+    
 function listBucket () {
   aws s3 ls s3://${SETTINGS[AWS_S3_BUCKET]} || errorAndExit "Failed to access bucket s3://${SETTINGS[AWS_S3_BUCKET]}" 1
 }
