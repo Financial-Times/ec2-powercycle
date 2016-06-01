@@ -5,6 +5,7 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 ### Table of Contents
 **[Usage](#usage)**
+
 **[Testing and development](#testing-and-development)**  
 **[Creating a Lambda Deployment Package](#creating-a-lambda-deployment-package)**  
 **[Build environment](#build-environment)**  
@@ -89,9 +90,9 @@ The following command is run in the root of the repository and it creates a Dock
 
 ### Launching Docker image
 
-When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [push-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lamnbda.sh) that pushes ec2-powercycle.zip package into Lambda.
+When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [post-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) that pushes ec2-powercycle.zip package into Lambda.
 
-To run [push-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
+To run [post-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
 
 ```
 sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
@@ -101,7 +102,7 @@ sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
 -it ec2powercycle
 ```
 
-Launching Docker image without environment variable will run [push-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in interactive mode that prompts user for AWS credentials. 
+Launching Docker image without environment variable will run [post-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in interactive mode that prompts user for AWS credentials. 
 ```
 sudo docker run -it ec2-powercycle
 ```
@@ -169,7 +170,7 @@ Once deployment package has been created we can create a Lambda function and use
  * Name*: Name of the Lambda function
  * Description: Optional description of the function
  * Runtime*: Python 2.7
- 5. In _Lambda function code_ section select _Upload a zip file_ to upload ec2powercycle.zip package to Lambda
+ 5. In _Lambda function code_ section select _Upload a .ZIP file_ to upload ec2powercycle.zip package to Lambda
  6. In _Lambda function handler and role_ section set handler name _ec2_powercycle.handler_
  7. Select the role that has the above IAM policy attached to it
  8. Click _Next_ and _Create function_
@@ -184,5 +185,3 @@ Once deployment package has been created we can create a Lambda function and use
  * _Rule description:_ __optional description of the rule__
  * _Schedule expression:_ __rate(15 minutes)__
  5. Click _Submit_ to create schedule
-
-
