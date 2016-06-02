@@ -130,7 +130,7 @@ The following policy example enables Lambda function to access the following AWS
                 "logs:CreateLogStream",
                 "logs:PutLogEvents"
             ],
-            "Resource": "arn:aws:logs:::*"
+            "Resource": "arn:aws:logs:*:*:*"
         },
         {
             "Effect": "Allow",
