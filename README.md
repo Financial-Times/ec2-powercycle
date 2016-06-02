@@ -128,7 +128,8 @@ The following policy example enables Lambda function to access the following AWS
             "Action": [
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                 "logs:DescribeLogStreams"
             ],
             "Resource": "arn:aws:logs:*:*:*"
         },
