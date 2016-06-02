@@ -2,7 +2,6 @@
 
 # This script posts EC2-POWERCYCLE package to S3
 
-declare -A SETTINGS
 PACKAGE="ec2-powercycle.zip"
 
 source functions.sh

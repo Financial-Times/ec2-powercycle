@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# This script posts EC2-POWERCYCLE package to Lambda
+# Post zip package to Lambda
+#
+# USAGE
+# ./post-to-lambda.sh <zip_file>
+# <zip_file> defaults to ec2-powercycle.zip
 
-declare -A SETTINGS
-PACKAGE="ec2-powercycle.zip"
+PACKAGE="${1-ec2-powercycle.zip}"
 
 source functions.sh
-
-function verifyLambdaFunction () {
-  aws lambda get-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} &>/dev/null || errorAndExit "Failed to access Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}. Function must be created before updating." 1
-}
 
 function releasePackage () {
   if [[ -f "${1}" ]]; then
