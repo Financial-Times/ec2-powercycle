@@ -186,3 +186,4 @@ Once deployment package has been created we can create a Lambda function and use
  * _Rule description:_ __optional description of the rule__
  * _Schedule expression:_ __rate(15 minutes)__
  5. Click _Submit_ to create schedule
+ 
