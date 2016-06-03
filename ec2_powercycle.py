@@ -1,11 +1,17 @@
+    #!/bin/python
+    # -*- coding: utf-8 -*-
+
 import boto3
 import collections
 from datetime import datetime
+from time import gmtime, strftime
 import pprint
 import json
 import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
 from croniter import croniter
+from functions import *
+
 '''
 Lambda function to stop and start EC2 instances
 
@@ -42,6 +48,7 @@ def getDesiredState(json_string):
         
 
 def handler(event = False, context = False):
+    print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
     if len(exclude_env_tags) > 0:
         print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
     reservations = ec.describe_instances(
@@ -106,15 +113,8 @@ def handler(event = False, context = False):
         manageInstance(startInstanceIds, 'start')
     if len(stopInstanceIds) > 0:
         manageInstance(stopInstanceIds, 'stop')
-
-def json_file_processor(fname):
-    try:  
-        os.path.isfile(fname)
-        return json.loads(open(fname).read())
-    except Exception, e:
-        print 'File not found in ' + str(os.getcwd()) + ': ' + str(e) 
-        sys.exit(1)
-        
+    print '### END - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
+      
 def manageInstance(idlist, action):
     if action == 'start':
         try:
