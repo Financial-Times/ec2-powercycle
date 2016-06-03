@@ -1,7 +1,7 @@
 FROM alpine
 
 RUN apk --update add py-pip gcc python-dev libffi-dev openssl-dev build-base bash jq util-linux curl git zip \
- && pip install ansible boto awscli
+ && pip install ansible boto3 awscli
 
 ADD *.sh /
 
