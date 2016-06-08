@@ -9,8 +9,6 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 **[Creating a Lambda Deployment Package](#creating-a-lambda-deployment-package)**  
 **[Build environment](#build-environment)**  
 **[Identity and Access Management policy](#identity-and-access-management-policy)**  
-***[IAM policy for Lambda function](#iam-policy-for-lambda-function)***   
-***[IAM policy for build pipeline](#iam-policy-for-serverless-pipeline)***  
 **[Setting up Lambda function](#setting-up-lambda-function)**   
 
 
