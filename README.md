@@ -4,13 +4,14 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 
 ### Table of Contents
-**[Usage](#usage)**
-
+**[Usage](#usage)**  
 **[Testing and development](#testing-and-development)**  
 **[Creating a Lambda Deployment Package](#creating-a-lambda-deployment-package)**  
 **[Build environment](#build-environment)**  
-**[IAM policy](#iam-policy)**  
-**[Setting up Lambda function](#setting-up-lambda-function)**  
+**[Identity and Access Management policy](#identity-and-access-management-policy)**  
+***[IAM policy for Lambda function](#iam-policy-for-lambda-function)***   
+***[IAM policy for build pipeline](#iam-policy-for-serverless-pipeline)***  
+**[Setting up Lambda function](#setting-up-lambda-function)**   
 
 
 ## Usage
@@ -19,30 +20,11 @@ Lambda function looks for EC2 instances that has resource tag _ec2Powewrcycle_ a
 
 Tag value is simple JSON document that describes start and stop schedule in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).
 
-### Example stop/start schedule: Mon - Fri, 8.45am - 5.40pm
+### Example stop/start schedule: Mon - Fri, 8.00am - 5.55pm
 ```
-ec2Powercycle: { "start": "45 8 * * 1-5", "stop": "40 17 * * 1-5" }
-```
-#### NOTE
-
-Stopping instances on an hour's mark may result in extra hour to be charged. 
-To fully utilise instance hours stop/start schdeule should be set 5 minutes prior to hour's mark.
-
-__BAD EXAMPLE__
-
-Scheduling instances to stop on an hour (runtime 8 hours): 
-
-```
-ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "0 17 * * 1-5" }
+ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
 ```
 
-__GOOD EXAMPLE__
-
-Scheduling instances to stop 5 minutes before the hour (runtime 7 hours 55 minutes): 
-
-```
-ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "55 16 * * 1-5" }
-```
 
 ## Testing and development
 
@@ -108,11 +90,11 @@ sudo docker run -it ec2-powercycle
 ```
 
 
-## IAM policy
+## Identity and Access Management policy
 
 When creating Lambda function you will be asked to associate IAM role with the function.
 
-### Creating Identity and Access Management (IAM) policy for Lambda function
+### IAM policy for Lambda function
   
 The following policy example enables Lambda function to access the following AWS services:
 
@@ -153,6 +135,32 @@ The following policy example enables Lambda function to access the following AWS
                 }
             },
             "Resource": "arn:aws:ec2:*:*:instance/*"
+        }
+    ]
+}
+```
+
+### IAM policy for build pipeline
+
+The following policy enables build and deployment job to update Lambda function, invoke it and update aliases.
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "lambda:GetFunction",
+                "lambda:InvokeFunction",
+                "lambda:List*",
+                "lambda:PublishVersion",
+                "lambda:UpdateAlias",
+                "lambda:UpdateFunctionCode",
+            ],
+            "Resource": [
+                "arn:aws:lambda:*:*:function:ec2-powercycle"
+            ]
         }
     ]
 }
