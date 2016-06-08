@@ -1,3 +1,7 @@
+machine:
+  environment:
+    AWS_DEFAULT_REGION: eu-west-1
+    AWS_LAMBDA_FUNCTION: ec2-powercycle
 dependencies:
   pre:
     - sudo pip install awscli
