@@ -1,0 +1,8 @@
+dependencies:
+  pre:
+    - sudo pip install awscli
+  post:
+    - chmod 755 && package.sh
+test:
+  post:
+    - test -f ec2-powercycle.zip 
