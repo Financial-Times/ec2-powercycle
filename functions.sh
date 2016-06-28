@@ -15,6 +15,36 @@ function exportSettings () {
   done
 }
 
+function getKeyValueFromFile () {
+  # Looks up value for key in format of key = value or key : value. 
+  # Separator can be specified as an argument
+  # Expects file to contain key only once
+  #
+  # arg1 = file name to look up
+  # arg2 = key to look up
+  # arg3 = key-value separator. Default is '='
+  #
+  # USAGE
+  # keyval=$(getKeyValueFromFile "${HOME}/.aws/credentials" "aws_access_key_id" "=")
+  # echo "Value retuned $keyval"
+
+  if [[ -z "$3" ]]; then
+    delimiter="="
+  else
+    delimiter="$3"
+  fi
+  key=$2
+
+  if [[ -f "$1" ]]; then
+    value=$(sed -En "s/(^${key}${delimiter}|${key} ${delimiter} )//p" $1)
+    rtncode="$?"
+    if [[ "$rtncode" -eq "0" ]]; then      
+      echo $value
+    fi
+  fi
+}
+
+
 function promptUser () {
   echo -ne "\e[31m$1: \e[0m" 
   read var
