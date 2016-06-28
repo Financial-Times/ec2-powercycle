@@ -4,6 +4,6 @@ machine:
     AWS_LAMBDA_FUNCTION: ec2-powercycle
 test:
   post:
-    - chmod 755 package.sh post-to-lambda.sh
+    - chmod 755 *.sh
     - ./package.sh
     - ./post-to-lambda.sh
