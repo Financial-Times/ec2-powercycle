@@ -31,8 +31,8 @@ test -z ${AWS_LAMBDA_FUNCTION} && promptUser "Lambda function name" AWS_LAMBDA_F
 
 echo -e "\e[31mExporting settings\e[0m"
 exportSettings
-echo -e "\e[31mVerifying Lambda function\e[0m"
-verifyLambdaFunction && echo -e "\e[31mLambda function access OK\e[0m"
+echo -e "\e[31mQuery Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}\e[0m"
+verifyLambdaFunction && echo -e "\e[31mLambda function found\e[0m"
 echo -e "\e[31mUpdate Lambda function\e[0m"
 releasePackage ${PACKAGE}
 echo -e "\e[31mDone\e[0m"
