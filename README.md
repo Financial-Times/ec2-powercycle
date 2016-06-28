@@ -87,6 +87,19 @@ Launching Docker image without environment variable will run [post-to-lambda.sh]
 sudo docker run -it ec2-powercycle
 ```
 
+## Serverless build pipeline
+
+
+[Circleci](https://circleci.com) is a hosted CI service that integrates nicely with [Github](https://github.com) and [AWS](http://console.aws.amazon.com/).
+
+### Adding AWS credentials to Circleci
+
+To enable Circleci build job to deploy deployment package to Lambda the build job must be configured with AWS credentials.
+
+ * Go to [Circleci Dashboad](https://circleci.com/dashboard) and click the cog icon associated with build job
+ * Under the _Permissions_ category click _AWS Permissions_
+ * Fill out _Access Key ID_ and _Secret Access Key_ fields
+
 
 ## Identity and Access Management policy
 
@@ -163,6 +176,7 @@ The following policy enables build and deployment job to update Lambda function,
     ]
 }
 ```
+
 
 ## Setting up Lambda function
 
