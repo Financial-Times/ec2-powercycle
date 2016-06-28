@@ -8,7 +8,7 @@
 
 PACKAGE="${1-ec2-powercycle.zip}"
 
-source functions.sh
+source "$(dirname $0)/functions.sh"
 
 function releasePackage () {
   if [[ -f "${1}" ]]; then
@@ -18,6 +18,12 @@ function releasePackage () {
   fi
 }
 
+# Lookup credentials from "${HOME}/.aws/credentials" if not provided as environment variables
+test -z ${AWS_ACCESS_KEY_ID} && AWS_ACCESS_KEY_ID=$(getKeyValueFromFile "${HOME}/.aws/credentials" "aws_access_key_id")
+test -z ${AWS_SECRET_ACCESS_KEY} && AWS_SECRET_ACCESS_KEY=$(getKeyValueFromFile "${HOME}/.aws/credentials" "aws_secret_access_key")
+test -z ${AWS_DEFAULT_REGION} && AWS_DEFAULT_REGION=$(getKeyValueFromFile "${HOME}/.aws/credentials" "region")
+
+# Prompt user to enter credentials if not provided as environment variables nor found in file "${HOME}/.aws/credentials"
 test -z ${AWS_ACCESS_KEY_ID} && promptUser "Enter AWS_ACCESS_KEY_ID" AWS_ACCESS_KEY_ID || SETTINGS[AWS_ACCESS_KEY_ID]="${AWS_ACCESS_KEY_ID}"
 test -z ${AWS_SECRET_ACCESS_KEY} && promptUser "Enter AWS_SECRET_ACCESS_KEY" AWS_SECRET_ACCESS_KEY || SETTINGS[AWS_SECRET_ACCESS_KEY]="${AWS_SECRET_ACCESS_KEY}"
 test -z ${AWS_DEFAULT_REGION} && promptUser "Enter AWS region for S3 bucket" AWS_DEFAULT_REGION || SETTINGS[AWS_DEFAULT_REGION]="${AWS_DEFAULT_REGION}"
