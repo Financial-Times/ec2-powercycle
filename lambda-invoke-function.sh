@@ -3,12 +3,16 @@
 # Script executes Lambda function 
 #
 # USAGE:
-# ./lambda-invoke-function.sh <function_name> <DryRun>
+# ./lambda-invoke-function.sh <function_name> [DryRun]
 
 source functions.sh
 
 function invokeFunction() {
-    aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]}
+    if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --invocation-type DryRun
+    else
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]}
+    fi
 }
 
 if [[ ! -z "$1" ]]; then
@@ -16,7 +20,8 @@ if [[ ! -z "$1" ]]; then
 fi
 
 if [[ "$2" == "DryRun" ]]; then
-    echo -e "\e[31mInvoke function ${SETTINGS[AWS_LAMBDA_FUNCTION]} in DryRun mode. Exit 0.\e[0m"
+    SETTINGS[AWS_LAMBDA_DRYRUN]="0"
+    echo -e "\e[31mInvoke function ${SETTINGS[AWS_LAMBDA_FUNCTION]} in DryRun mode.\e[0m"
 fi
 
 # Lookup credentials from "${HOME}/.aws/credentials" if not provided as environment variables
