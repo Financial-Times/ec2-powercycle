@@ -3,7 +3,7 @@
 # Script executes Lambda function 
 #
 # USAGE:
-# ./lambda-invoke-function.sh
+# ./lambda-invoke-function.sh <function_name> <DryRun>
 
 source functions.sh
 
@@ -11,9 +11,12 @@ function invokeFunction() {
     aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]}
 }
 
-if [[ "$1" == "DryRun" ]]; then
-    echo -e "\e[31mINvoking function ${SETTINGS[AWS_LAMBDA_FUNCTION]} in DryRun mode. Exit 0.\e[0m"
-    exit 0
+if [[ ! -z "$1" ]]; then
+    AWS_LAMBDA_FUNCTION="$1"
+fi
+
+if [[ "$2" == "DryRun" ]]; then
+    echo -e "\e[31mInvoke function ${SETTINGS[AWS_LAMBDA_FUNCTION]} in DryRun mode. Exit 0.\e[0m"
 fi
 
 test -z ${AWS_ACCESS_KEY_ID} && promptUser "Enter AWS_ACCESS_KEY_ID" AWS_ACCESS_KEY_ID || SETTINGS[AWS_ACCESS_KEY_ID]="${AWS_ACCESS_KEY_ID}"
