@@ -12,14 +12,14 @@ source functions.sh
 function invokeFunction() {
     if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --invocation-type DryRun ${OUTPUT}
-        if [[ "$(sed -En 's/*\"StatusCode\"://p' output.txt  | tr -d ' ')" -ne "204" ]]; then
+        if [[ "$(grep StatusCode output.txt | tr -d ' ' | cut -d ':' -f 2)" -ne "204" ]]; then
             return 1
         else
             echo -e "\e[31mStatusCode 204: success\e[0m"
         fi             
     else
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT}
-        if [[ "$(sed -En 's/*\"StatusCode\"://p' output.txt  | tr -d ' ')" -ne "200" ]]; then
+        if [[ "$(grep StatusCode output.txt | tr -d ' ' | cut -d ':' -f 2)" -ne "200" ]]; then
             return 1
         else
             echo -e "\e[31mStatusCode 200: success\e[0m"
