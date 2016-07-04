@@ -12,8 +12,7 @@ source functions.sh
 function invokeFunction() {
     if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --invocation-type DryRun ${OUTPUT}
-        return $?
-        fi             
+        return $?           
     else
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT}
         return $?
