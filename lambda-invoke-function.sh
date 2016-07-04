@@ -5,13 +5,15 @@
 # USAGE:
 # ./lambda-invoke-function.sh <function_name> [DryRun]
 
+OUTPUT="lambda-invoke-function.out"
+
 source functions.sh
 
 function invokeFunction() {
     if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
-        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --invocation-type DryRun
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --invocation-type DryRun ${OUTPUT} && cat ${OUTPUT}  
     else
-        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]}
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT} && cat ${OUTPUT}
     fi
 }
 
