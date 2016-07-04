@@ -6,4 +6,4 @@ test:
   post:
     - chmod 755 *.sh
     - ./package.sh
-    - ./post-to-lambda.sh
+    - ./lambda-deploy-latest.sh
