@@ -7,3 +7,13 @@ test:
     - chmod 755 *.sh
     - ./package.sh
     - ./lambda-deploy-latest.sh
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - ./lambda-invoke-function.sh DryRun
+  release:
+    tag: /release-.*/
+    commands:
+      - ./lambda-publish-version.sh      
