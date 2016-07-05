@@ -49,6 +49,14 @@ def getDesiredState(json_string):
 def handler(event = False, context = False):
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
     try:
+        print 'Event variable value: ' + pprint.pprint(event)
+    except:
+        pass
+    try:
+        print 'Context variable value: ' + pprint.pprint(context)
+    except:
+        pass
+    try:        
         data = json.loads(event)
         print 'event JSON doc loaded'
         if data['DryRun']:
