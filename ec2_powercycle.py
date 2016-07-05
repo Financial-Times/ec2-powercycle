@@ -24,7 +24,6 @@ URL: https://github.com/jussi-ft/ec2-powercycle
 '''
 tag = 'ec2Powercycle' # Set resource tag
 exclude_env_tags=['p'] # Value of the environment tags that should be excluded from powercycle  
-dryrun = False # Set True to mock behaviour
 ec = boto3.client('ec2')
 startInstanceIds=[]
 stopInstanceIds=[]
@@ -49,6 +48,12 @@ def getDesiredState(json_string):
 
 def handler(event = False, context = False):
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
+    try:
+        if event in 'DryRun':
+            dryrun = True
+            print 'DryRun is ' + str(dryrun)
+    except Exception, e:
+        dryrun = False
     if len(exclude_env_tags) > 0:
         print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
     reservations = ec.describe_instances(
@@ -110,12 +115,12 @@ def handler(event = False, context = False):
         except Exception, e:
             print 'Error: ' + str(e)
     if len(startInstanceIds) > 0:
-        manageInstance(startInstanceIds, 'start')
+        manageInstance(startInstanceIds, 'start', dryrun)
     if len(stopInstanceIds) > 0:
-        manageInstance(stopInstanceIds, 'stop')
+        manageInstance(stopInstanceIds, 'stop', dryrun)
     print '### END - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
       
-def manageInstance(idlist, action):
+def manageInstance(idlist, action, dryrun):
     if action == 'start':
         try:
             response = ec.start_instances(
