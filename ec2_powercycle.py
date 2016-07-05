@@ -49,13 +49,15 @@ def getDesiredState(json_string):
 def handler(event = False, context = False):
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
     try:
-        print 'Event variable value: ' + pprint.pprint(event)
+        print 'Event variable value: ' + str(type(event))
+        pprint.pprint(event)
     except:
-        pass
+        print 'Failed to process event variable'
     try:
-        print 'Context variable value: ' + pprint.pprint(context)
+        print 'Context variable value: ' + str(type(context))
+        pprint.pprint(context)
     except:
-        pass
+        print 'Failed to process context variable'
     try:        
         data = json.loads(event)
         print 'event JSON doc loaded'
@@ -63,7 +65,7 @@ def handler(event = False, context = False):
             dryrun = True
             print 'DryRun is ' + str(dryrun)
     except Exception, e:
-        print 'Failed to load JSON' + str(e)
+        print 'Failed to load JSON: ' + str(e)
         dryrun = False
     if len(exclude_env_tags) > 0:
         print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
