@@ -19,6 +19,7 @@ function invokeFunction() {
             cat ${OUTPUT}
         else
             echo -e "\e[31mOutput file ${OUTPUT} not found!\e[0m"
+        fi
         return ${RTNCODE}           
     else        
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT}
@@ -27,7 +28,8 @@ function invokeFunction() {
             echo -e "\e[31mInvoke function returned: \e[0m"
             cat ${OUTPUT}
         else
-            echo -e "\e[31mOutput file ${OUTPUT} not found!\e[0m"        
+            echo -e "\e[31mOutput file ${OUTPUT} not found!\e[0m"
+        fi       
         return ${RTNCODE}
     fi
 }
