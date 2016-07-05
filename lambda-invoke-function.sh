@@ -14,22 +14,10 @@ function invokeFunction() {
     if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --payload '{ "DryRun": "True" }' ${OUTPUT}
         RTNCODE="$?"
-        if [[ -f ${OUTPUT} ]]; then
-            echo -e "\e[31mInvoke function returned: \e[0m"
-            cat ${OUTPUT}
-        else
-            echo -e "\e[31mOutput file ${OUTPUT} not found!\e[0m"
-        fi
         return ${RTNCODE}           
     else        
         aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT}
         RTNCODE="$?"
-        if [[ -f ${OUTPUT} ]]; then
-            echo -e "\e[31mInvoke function returned: \e[0m"
-            cat ${OUTPUT}
-        else
-            echo -e "\e[31mOutput file ${OUTPUT} not found!\e[0m"
-        fi       
         return ${RTNCODE}
     fi
 }

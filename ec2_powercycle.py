@@ -63,7 +63,7 @@ def handler(event = False, context = False):
             dryrun = True
             print 'DryRun is ' + str(dryrun)
     except Exception, e:
-        print 'Failed to load JSON'
+        print 'Failed to load JSON' + str(e)
         dryrun = False
     if len(exclude_env_tags) > 0:
         print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
