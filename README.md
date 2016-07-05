@@ -34,7 +34,7 @@ You also need to set up AWS credetials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 To run the job first change to _python_ directory inside the repository, then call the hander() function.
 
 ```
-cd _/path/to/repository/_python
+cd /path/to/repository
 python -c "from ec2_powercycle import * ; handler()"
 ```
 
