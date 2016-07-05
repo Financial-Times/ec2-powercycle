@@ -59,8 +59,11 @@ def handler(event = False, context = False):
     except:
         print 'Failed to process context variable'
     try:        
-        data = json.loads(event)
-        print 'event JSON doc loaded'
+        if type(event) is str:
+            data = json.loads(event)
+            print 'event JSON doc loaded'
+        else:
+            data = event
         if data['DryRun']:
             dryrun = True
             print 'DryRun is ' + str(dryrun)
