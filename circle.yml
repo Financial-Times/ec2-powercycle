@@ -12,7 +12,7 @@ deployment:
   master:
     branch: master
     commands:
-      - ./lambda-invoke-function.sh ec2-powercycle DryRun
+      - ./lambda-invoke-function.sh ec2-powercycle '{ "DryRun": "True" }'
   release:
     tag: /release-.*/
     commands:
