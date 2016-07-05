@@ -4,6 +4,7 @@
 #
 # USAGE:
 # ./lambda-invoke-function.sh <function_name> [DryRun]
+# More information: http://docs.aws.amazon.com/cli/latest/reference/lambda/invoke.html
 
 OUTPUT="lambda-invoke-function.out"
 
