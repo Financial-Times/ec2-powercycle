@@ -57,6 +57,7 @@ def handler(event = False, context = False):
         if data['DryRun'] in 'True':
             dryrun = True
             print 'DryRun is ' + str(dryrun)
+            print 'Jussi here demoing serverless pipeline'
     except Exception, e:
         print 'Failed to load JSON: ' + str(e)
         dryrun = False
