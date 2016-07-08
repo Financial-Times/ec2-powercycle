@@ -4,6 +4,10 @@
 
 declare -A SETTINGS
 
+function createLambdaAlias () {
+    aws lambda create-alias --function-name $1 --name $2 --function-version $3 >/dev/null 
+}
+
 function errorAndExit() {
     echo $1
     exit $2   
@@ -90,4 +94,9 @@ function promptUser () {
 
 function verifyLambdaFunction () {
   aws lambda get-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} >/dev/null || errorAndExit "Failed to verify access to Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1
+}
+
+function validateLambdaAlias () {
+    aws lambda list-aliases --function-name $1 | grep "Name" | grep $2 >/dev/null
+    echo $?
 }
