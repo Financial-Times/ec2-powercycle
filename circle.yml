@@ -17,4 +17,4 @@ deployment:
     tag: /release-.*/
     commands:
       - ./lambda-publish-version.sh
-      - ./lambda-update-alias.sh ec2-powercycle TEST   
+      - ./lambda-update-alias.sh ec2-powercycle JUSSI   
