@@ -44,6 +44,26 @@ function getKeyValueFromFile () {
   fi
 }
 
+function listVersions () {
+    newest=$(aws lambda list-versions-by-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} | grep '"Version"' | grep -v LATEST | cut -d '"' -f 4 | tail -1)
+    oldest=$(aws lambda list-versions-by-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} | grep '"Version"' | grep -v LATEST | cut -d '"' -f 4 | head -1)
+    if [[ "${1,,}" == "newest"  && ${newest} -gt ${oldest} ]]; then           
+        echo ${newest}
+    elif [[ "${1,,}" == "oldest" && ${oldest} -lt ${newest}  ]]; then
+        echo ${oldest}
+    else 
+        unset VERIFIED
+        for each in $(aws lambda list-versions-by-function --function-name ec2-powercycle | grep '"Version"' | grep -v LATEST | cut -d '"' -f 4); do 
+            if [[ "${each}" -eq "$1" ]]; then
+                VERIFIED=0
+            fi
+        done
+        if [[ ! -z "${VERIFIED}" ]]; then
+            echo true
+        fi
+    fi
+}
+
 function processCredentials() {
 
     # Lookup credentials from "${HOME}/.aws/credentials" if not provided as environment variables
