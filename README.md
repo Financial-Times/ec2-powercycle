@@ -162,12 +162,13 @@ The following policy enables build and deployment job to update Lambda function,
         {
             "Effect": "Allow",
             "Action": [
+                "lambda:CreateAlias",
                 "lambda:GetFunction",
                 "lambda:InvokeFunction",
                 "lambda:List*",
                 "lambda:PublishVersion",
                 "lambda:UpdateAlias",
-                "lambda:UpdateFunctionCode",
+                "lambda:UpdateFunctionCode"
             ],
             "Resource": [
                 "arn:aws:lambda:*:*:function:ec2-powercycle"
