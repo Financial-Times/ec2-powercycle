@@ -48,7 +48,6 @@ def getDesiredState(json_string):
 
 def handler(event = False, context = False):
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
-    print 'Demo code change'
     try:        
         if type(event) is str:
             data = json.loads(event)
