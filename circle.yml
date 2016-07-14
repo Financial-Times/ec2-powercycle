@@ -5,7 +5,7 @@ machine:
 
 dependencies:
   pre:
-    - sudo apt-get install jq
+    - sudo apt-get install -y jq
   
 test:
   post:
