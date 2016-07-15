@@ -8,7 +8,7 @@
 # If version number is omitted then script will look up the latest version number
 
 
-source "$(dirname $0)/functions.sh"
+source "$(dirname $0)/functions.sh" || exit 1
 
 function updateAlias () {
     aws lambda update-alias --function-name $1 --name $2 --function-version $3

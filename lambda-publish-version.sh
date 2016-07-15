@@ -7,7 +7,7 @@
 # USAGE:
 # ./lambda-publish-version.sh <function_name>
 
-source functions.sh
+source "$(dirname $0)/functions.sh" || exit 1
 
 function publishVersion() {
     aws lambda publish-version  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]}

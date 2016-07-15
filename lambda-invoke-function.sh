@@ -8,7 +8,7 @@
 
 OUTPUT="lambda-invoke-function.out"
 
-source functions.sh
+source "$(dirname $0)/functions.sh" || exit 1
 
 function invokeFunction() {
     if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
