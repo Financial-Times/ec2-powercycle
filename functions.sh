@@ -40,12 +40,27 @@ function getKeyValueFromFile () {
   key=$2
 
   if [[ -f "$1" ]]; then
-    value=$(sed -En "s/(^${key}${delimiter}|${key} ${delimiter} )//p" $1)
+    value=$(sed -En "s/(${key}${delimiter}|${key} ${delimiter} )//p" $1)
     rtncode="$?"
     if [[ "$rtncode" -eq "0" ]]; then      
       echo $value
     fi
   fi
+}
+
+function getKeyValueFromJSON () {
+  # Look up value of key in JSON document.
+  # 
+  # arg1 = file name to look up
+  # arg2 = key to look up
+  key=$2
+  if [[ -f "$1" ]]; then
+    value=$(sed -En "s/(.${key}.:.)//p" $1)
+    rtncode="$?"
+    if [[ "$rtncode" -eq "0" ]]; then
+        removeJSONmarkup $value
+    fi
+  fi     
 }
 
 function listVersions () {
@@ -66,6 +81,21 @@ function listVersions () {
             echo true
         fi
     fi
+}
+
+function lstrip () {
+    # Bash implementation of Python lstrip method
+    # Removes white spaces on left hand side of the string
+    # arg1 = string
+    input=$1
+    i=0
+    while [ "$i" -lt "${#input}" ]; do
+      if [ "${input:$i:1}" != " " ]; then
+          echo "${input:$i:${#input}}"
+          break
+      fi
+      (( i++ ))
+    done
 }
 
 function processCredentials() {
@@ -90,6 +120,52 @@ function promptUser () {
   if [[ -z "${SETTINGS[${2}]}" ]]; then
     promptUser "${1}" "${2}"
   fi
+}
+
+function removeJSONmarkup () {
+  # Delete whitespaces, opening/closing quotation marks and comma at the end of string
+  # Return string without JSON markup
+  input=$1
+  length=${#input}
+  i=0
+  input=$(strip ${input}) # Delete whitespaces
+  if [[ "${input:0:1}" == '"' ]]; then # Delete opening quotation if exists
+      input="${input:1:`expr ${#input}`}"
+  else
+      echo "Character \"${input:0:1}\""
+  fi
+  if [[ "${input:`expr ${#input} - 1`:1}" == ',' ]]; then # Delete trailing comma if exists
+      input="${input:0:-1}"
+  fi
+  if [[ "${input:`expr ${#input} - 1`:1}" == '"' ]]; then # Delete closing quotations if exists
+      input="${input:0:-1}"
+  fi
+  echo "${input}"
+}
+
+function rstrip () {
+    # Bash implementation of Python rstrip method
+    # Removes white spaces on the right hand side of the string
+    # arg1 = string
+    input=$1
+    i=`expr ${#input} - 1`
+    while [ "$i" -ge "0" ]; do
+      if [ "${input:$i:1}" != " " ]; then
+          substring="${input:0:`expr ${i} + 1`}"
+          echo "${substring}"
+          break
+      fi
+      (( i-- ))
+    done    
+}
+
+function strip () {
+    # Bash implementation of Python strip method
+    # Removes white spaces on the right and left hand side of the string
+    # arg1 = string
+    input=$(lstrip $1)
+    input=$(rstrip $input)
+    echo ${input}
 }
 
 function verifyLambdaFunction () {
