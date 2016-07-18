@@ -8,6 +8,7 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 **[Testing and development](#testing-and-development)**  
 **[Creating a Lambda Deployment Package](#creating-a-lambda-deployment-package)**  
 **[Build environment](#build-environment)**  
+**[Serverless build pipeline](#serverless-build-pipeline)**  
 **[Identity and Access Management policy](#identity-and-access-management-policy)**  
 **[Setting up Lambda function](#setting-up-lambda-function)**   
 
@@ -98,14 +99,31 @@ sudo docker run -it ec2-powercycle
 
 [Circleci](https://circleci.com) is a hosted CI service that integrates nicely with [Github](https://github.com) and [AWS](http://console.aws.amazon.com/).
 
-### Adding AWS credentials to Circleci
+
+### Release process
+
+Build pipeline currently has 2 workflows: [Development](https://github.com/Financial-Times/ec2-powercycle/blob/master/circle.yml#L11-L16) (red lines) and [Production](https://github.com/Financial-Times/ec2-powercycle/blob/master/circle.yml#L17-L21) (green lines).
+
+![Build pipeline](https://github.com/Financial-Times/ec2-powercycle/raw/master/doc/ServerlessPipelineforAWSLambda.png)
+
+The Development workflow is run everytime the _master_ branch is updated. Development workflow creates a deployment package, deploys it to Lambda and invokes the function against DEV alias.
+
+Once you have completed Development work and wish to "promote" your code to Production you can trigger Production workflow by creating a Git tag with prefix _release-_ and pushing the tag to repository. 
+
+Use the following commands to create a tag and push it to repository.
+
+```
+git tag -a release-12 -m "Repoint PROD alias to release-12 tag"
+git push origin release-12
+```
+
+### Adding AWS credentials into Circleci
 
 To enable Circleci build job to deploy deployment package to Lambda the build job must be configured with AWS credentials.
 
  * Go to [Circleci Dashboad](https://circleci.com/dashboard) and click the cog icon associated with build job
  * Under the _Permissions_ category click _AWS Permissions_
  * Fill out _Access Key ID_ and _Secret Access Key_ fields
-
 
 ## Identity and Access Management policy
 
