@@ -14,7 +14,7 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 ## Usage
 
-Lambda function looks for EC2 instances that has resource tag _ec2Powewrcycle_ attached to it.
+Lambda function looks for EC2 instances that has a resource tag _ec2Powewrcycle_ attached to it.
 
 Tag value is simple JSON document that describes start and stop schedule in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).
 
@@ -22,6 +22,12 @@ Tag value is simple JSON document that describes start and stop schedule in [cro
 ```
 ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
 ```
+
+As of [commit 00389de](https://github.com/Financial-Times/ec2-powercycle/commit/00389defafe30d1a85627a35713640a6e150e7e7) the stop/start schedule can be defined as an URL to publicly accessible JSON document. This feature can be handy when managing schedule for large number of nodes.
+```
+ec2Powercycle: https://raw.githubusercontent.com/Financial-Times/ec2-powercycle/master/json/dev-schedule.json
+```
+
 
 
 ## Testing and development
@@ -179,7 +185,7 @@ The following policy enables build and deployment job to update Lambda function,
 ```
 
 
-## Setting up Lambda function
+## Creating Lambda function
 
 Once deployment package has been created we can create a Lambda function and use CloudWatch to set the function to run periodically. 
 
