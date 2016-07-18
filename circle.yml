@@ -5,7 +5,7 @@ machine:
   
 test:
   post:
-    - chmod -R 755 *.sh
+    - chmod 755 sh/*.sh
 
 deployment:
   master:
