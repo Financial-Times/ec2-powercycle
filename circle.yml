@@ -5,17 +5,17 @@ machine:
   
 test:
   post:
-    - chmod 755 *.sh
+    - chmod -R 755 *.sh
 
 deployment:
   master:
     branch: master
     commands:
-      - ./package.sh
-      - ./lambda-deploy-latest.sh    
-      - ./lambda-invoke-function.sh ec2-powercycle DryRun
+      - ./sh/package.sh
+      - ./sh/lambda-deploy-latest.sh    
+      - ./sh/lambda-invoke-function.sh ec2-powercycle DryRun
   release:
     tag: /release-.*/
     commands:
-      - ./lambda-publish-version.sh
-      - ./lambda-update-alias.sh ec2-powercycle PROD   
+      - ./sh/lambda-publish-version.sh
+      - ./sh/lambda-update-alias.sh ec2-powercycle PROD   
