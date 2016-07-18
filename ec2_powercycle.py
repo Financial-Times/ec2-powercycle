@@ -1,7 +1,7 @@
     #!/bin/python
     # -*- coding: utf-8 -*-
 
-import boto3, requests, re
+import boto3, re
 import collections
 from datetime import datetime
 from time import gmtime, strftime
@@ -10,6 +10,7 @@ import json
 import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
 from croniter import croniter
+import requests
 from functions import *
 
 '''
