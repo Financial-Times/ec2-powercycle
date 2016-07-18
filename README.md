@@ -77,9 +77,9 @@ The following command is run in the root of the repository and it creates a Dock
 
 ### Launching Docker image
 
-When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [post-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) that pushes ec2-powercycle.zip package into Lambda.
+When Docker image is running it first executes the packaging script [package.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/package.sh), then deployment script [lambda-deploy-latest.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/lambda-deploy-latest.sh) that pushes ec2-powercycle.zip package into Lambda.
 
-To run [post-to-lambda.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/post-to-lambda.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
+To run [lambda-deploy-latest.sh](https://github.com/Financial-Times/ec2-powercycle/blob/master/lambda-deploy-latest.sh) in __headless__ mode you can provide AWS credentials as Docker environment variables.
 
 ```
 sudo docker run --env "AWS_ACCESS_KEY_ID=<access_key_id>" \
