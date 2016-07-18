@@ -187,7 +187,7 @@ Once deployment package has been created we can create a Lambda function and use
 
  1. Log on to AWS console and go to Lambda configuration menu
  2. Click _Create a Lambda function_ 
- 3. In _Select blueprint_ menu click _Skip_ button
+ 3. In _Select blueprint_ menu choose one of the blueprints (e.g. _s3-get-object-python_) click _Remove_ button on the next screen to remove _triggers_. Then click _Next_.
  4. on _Configure function_ page provide the following details
  * Name*: Name of the Lambda function
  * Description: Optional description of the function
