@@ -1,7 +1,7 @@
     #!/bin/python
     # -*- coding: utf-8 -*-
 
-import boto3
+import boto3, requests, re
 import collections
 from datetime import datetime
 from time import gmtime, strftime
@@ -44,7 +44,13 @@ def getDesiredState(json_string):
             return 'running'
     except Exception, e:        
         return False
-        
+
+def get_resoure_tags(data):
+    tags = {}
+    for item in data:
+        tmplist = item.values()
+        tags[tmplist[1]] = tmplist[0] 
+    return tags
 
 def handler(event = False, context = False):
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
@@ -58,7 +64,6 @@ def handler(event = False, context = False):
             dryrun = True
             print 'DryRun is ' + str(dryrun)
     except Exception, e:
-        print 'Failed to load JSON: ' + str(e)
         dryrun = False
     if len(exclude_env_tags) > 0:
         print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
@@ -78,14 +83,7 @@ def handler(event = False, context = False):
         sys.exit(0)
     print "InstanceIDs with tag " + tag + ':'
     for element in instances:
-        print '\t * ' + str(element['InstanceId'])
-         
-    def get_resoure_tags(data):
-        tags = {}
-        for item in data:
-            tmplist = item.values()
-            tags[tmplist[1]] = tmplist[0] 
-        return tags
+        print '\t * ' + str(element['InstanceId'])        
     
     for instance in instances:
         #print 'instance details'
@@ -93,6 +91,13 @@ def handler(event = False, context = False):
         #pprint.pprint(instance)
         resource_tags = get_resoure_tags(instance['Tags'])
         try:
+            if re.search("http",resource_tags[tag]):
+                try:
+                    print 'Fetching document from ' + resource_tags[tag]                
+                    r = requests.get(resource_tags[tag])                
+                    resource_tags[tag] = json.dumps(r.json())
+                except Exception, e:
+                    print 'Failed to load document ' + resource_tags[tag]
             desired_state=getDesiredState(resource_tags[tag])
             if desired_state == 'stopped' and str(instance['State']['Name']) == 'running':
                 print 'Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag]
