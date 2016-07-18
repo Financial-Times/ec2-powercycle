@@ -8,7 +8,7 @@
 
 PACKAGE="${1-ec2-powercycle.zip}"
 
-source "$(dirname $0)/functions.sh"
+source "$(dirname $0)/functions.sh" || exit 1 
 
 function releasePackage () {
   if [[ -f "${1}" ]]; then
