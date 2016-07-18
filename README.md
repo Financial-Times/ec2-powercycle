@@ -49,10 +49,10 @@ python -c "from ec2_powercycle import * ; handler()"
 
 EC2-POWERCYCLE uses 3rd party library called [Croniter](https://github.com/kiorky/croniter) which must be installed before deployment package is created.
 
-### Installing Croniter into lib/ directory
+### Installing Croniter and Requests into lib/ directory
 
 ```
-pip install croniter -t lib/
+pip install croniter requests -t lib/
 ```
 
 ### Creating zip archive
