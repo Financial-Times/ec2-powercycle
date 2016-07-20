@@ -10,7 +10,7 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 **[Build environment](#build-environment)**  
 **[Serverless build pipeline](#serverless-build-pipeline)**  
 **[Identity and Access Management policy](#identity-and-access-management-policy)**  
-**[Setting up Lambda function](#setting-up-lambda-function)**   
+**[Creating and scheduling Lambda function](#creating-and-scheduling-lambda-function)**   
 
 
 ## Usage
@@ -203,7 +203,7 @@ The following policy enables build and deployment job to update Lambda function,
 ```
 
 
-## Creating Lambda function
+## Creating and scheduling Lambda function
 
 Once deployment package has been created we can create a Lambda function and use CloudWatch to set the function to run periodically. 
 
