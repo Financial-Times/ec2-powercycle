@@ -213,7 +213,7 @@ Once deployment package has been created we can create a Lambda function and use
  2. Click _Create a Lambda function_ 
  3. In _Select blueprint_ menu choose one of the blueprints (e.g. _s3-get-object-python_) click _Remove_ button on the next screen to remove _triggers_. Then click _Next_.
  4. on _Configure function_ page provide the following details
- * Name*: Name of the Lambda function
+ * Name*: ec2-powercycle
  * Description: Optional description of the function
  * Runtime*: Python 2.7
  5. In _Lambda function code_ section select _Upload a .ZIP file_ to upload ec2powercycle.zip package to Lambda
