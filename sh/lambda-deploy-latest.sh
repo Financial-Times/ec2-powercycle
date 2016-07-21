@@ -18,7 +18,6 @@ function releasePackage () {
 }
 echo -e "\e[31mProcess arguments\e[0m"
 processArguments ${*}
-printArguments
 if [[ "${CLI_ARGS[caa],,} != 'true'}" ]]; then
     echo -e "\e[31mProcess credentials\e[0m"
     processCredentials
