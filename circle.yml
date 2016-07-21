@@ -20,5 +20,5 @@ deployment:
     tag: /release-.*/
     commands:
       - ./sh/lambda-publish-version.sh
-      - ./sh/lambda-update-alias.sh --function ec2-powercycle --alias PROD
+      - ./sh/lambda-update-alias.sh --function ec2-powercycle --alias LIVE
       - ./sh/iam-assume-role-and-release.sh  --function ec2-powercycle --alias LIVE
