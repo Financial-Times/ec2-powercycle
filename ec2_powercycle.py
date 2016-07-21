@@ -80,12 +80,10 @@ def handler(event = False, context = False):
                 for r in reservations
             ], [])
     print 'Found ' + str(len(instances)) + ' instances with tag ' + tag
-    if len(instances) is 0:
-        sys.exit(0)
-    print "InstanceIDs with tag " + tag + ':'
-    for element in instances:
-        print '\t * ' + str(element['InstanceId'])        
-    
+    if len(instances) > 0:
+        print "InstanceIDs with tag " + tag + ':'
+        for element in instances:
+            print '\t * ' + str(element['InstanceId'])
     for instance in instances:
         #print 'instance details'
         print '________________'

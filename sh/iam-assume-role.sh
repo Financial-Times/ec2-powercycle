@@ -13,21 +13,21 @@
 source "$(dirname $0)/functions.sh" || exit 1 
 
 function assumeRole () {
-    aws sts assume-role --role-arn "${CLI_ARGS[--arn]}" --role-session-name "ec2-powercycle"  || exit 1 
+    aws sts assume-role --role-arn "${CLI_ARGS[arn]}" --role-session-name "ec2-powercycle"  || exit 1 
 }
 
 JSON_OUT='role.json'
-ARG1=$1
-MOCK=$2
-test -z ${ARG1} && errorAndExit "Usage: $(dirname $0)/iam-assume-role.sh --arn <role_arn> [--mock true]" 1 
+
 
 processArguments ${*}
+printArguments
+test -z ${CLI_ARGS[arn]} && errorAndExit "Usage: $(dirname $0)/iam-assume-role.sh --arn <role_arn> [--mock true]" 1
 processCredentials
 echo -e "\e[31mExporting settings\e[0m"
 exportSettings
 
 echo -e "\e[31mGetting temporary cross-account access credentials\e[0m"
-if [[ "${CLI_ARGS[--mock],,}" != 'true' ]]; then # Only assume role if --mock is not true
+if [[ "${CLI_ARGS[mock],,}" != 'true' ]]; then # Only assume role if --mock is not true
     assumeRole > ${JSON_OUT}
 else
     echo -e "\e[31m...except I am not because --mock is set true\e[0m"
@@ -40,5 +40,6 @@ echo -e "\e[31mAWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}\e[0m"
 export AWS_SESSION_TOKEN="$(getKeyValueFromJSON ${JSON_OUT} SessionToken)"
 echo -e "\e[31mAWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}\e[0m"
 
-verifyLambdaFunction
-#invokeFunction
+verifyLambdaFunction && echo -e "\e[31mLambda function access OK\e[0m" || errorAndExit "Failed to access function ${SETTINGS[AWS_LAMBDA_FUNCTION]}"
+. $(dirname $0)/lambda-deploy-latest.sh --file ec2-powercycle.zip --caa true 
+. $(dirname $0)/lambda-invoke-function.sh --function ec2-powercycle --caa true --dryrun true
