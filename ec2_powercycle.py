@@ -167,6 +167,7 @@ def manageInstance(idlist, action, dryrun):
 def printBuildInfo():
     try:
         f = open('build.info', 'r')
+        print "Build info:"
         print f.read()
         f.close()
     except:
