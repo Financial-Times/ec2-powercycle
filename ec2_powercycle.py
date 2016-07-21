@@ -44,7 +44,7 @@ def getDesiredState(json_string):
             print 'Start event ' + str(starttime.get_prev(datetime)) + ' is more recent than stop event ' + str(stoptime.get_prev(datetime)) + '. Desired state: running'
             return 'running'
     except Exception, e:
-        print 'Error processing JSON document ' + str(e)        
+        print 'Error: ' + str(e)        
         return False
 
 def get_resoure_tags(data):
