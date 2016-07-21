@@ -55,6 +55,7 @@ def get_resoure_tags(data):
 
 def handler(event = False, context = False):
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
+    printBuildInfo()
     try:        
         if type(event) is str:
             data = json.loads(event)
@@ -161,3 +162,11 @@ def manageInstance(idlist, action, dryrun):
                 print '\t * ' + each
     else:
         print 'Got gibberish action ' + str(action) + ' and I do not know what to do'
+    
+def printBuildInfo():
+    try:
+        f = open('build.info', 'r')
+        print f.read()
+        f.close()
+    except:
+        pass    
