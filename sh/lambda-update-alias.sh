@@ -25,10 +25,13 @@ if [[ ! -z "${CLI_ARGS[alias]}" ]]; then
     AWS_LAMBDA_ALIAS="${CLI_ARGS[alias]}"
 fi
 
-processCredentials
-
-echo -e "\e[31mExporting settings\e[0m"
-exportSettings
+if [[ "${CLI_ARGS[caa],,} != 'true'}" ]]; then
+    processCredentials
+    echo -e "\e[31mExporting settings\e[0m"
+    exportSettings
+else
+    echo -e "\e[31mCross account access flag set. Not processing credentials\e[0m"
+fi
 echo -e "\e[31mQuery Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}\e[0m"
 verifyLambdaFunction && echo -e "\e[31mLambda function found\e[0m"
 

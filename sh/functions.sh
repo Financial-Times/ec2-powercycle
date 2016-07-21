@@ -110,7 +110,7 @@ function listVersions () {
             fi
         done
         if [[ ! -z "${VERIFIED}" ]]; then
-            echo true
+            echo ${newest}
         fi
     fi
 }

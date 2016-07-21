@@ -19,10 +19,14 @@ fi
 
 echo -e "\e[31mProcessing arguments\e[0m"
 processArguments ${*}
-echo -e "\e[31mProcessing credentials\e[0m"
-processCredentials
-echo -e "\e[31mExporting settings\e[0m"
-exportSettings
+if [[ "${CLI_ARGS[caa],,} != 'true'}" ]]; then
+    echo -e "\e[31mProcessing credentials\e[0m"
+    processCredentials
+    echo -e "\e[31mExporting settings\e[0m"
+    exportSettings
+else
+    echo -e "\e[31mCross account access flag set. Not processing credentials\e[0m"    
+fi
 echo -e "\e[31mVerifying Lambda function\e[0m"
 verifyLambdaFunction && echo -e "\e[31mLambda function access OK\e[0m" || errorAndExit "Failed to access function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1
 publishVersion && echo -e "\e[31mNew version created successfully\e[0m" || errorAndExit "Failed to create new version for ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1
