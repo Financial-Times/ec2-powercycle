@@ -224,12 +224,12 @@ Once deployment package has been created we can create a Lambda function and use
   
 ### Scheduling Lambda function
 
- 1. In Lambda configuration menu open the ec2-ppowercycle Lambda job
+ 1. In Lambda configuration menu open the ec2-powercycle Lambda job
  2. Go to _Triggers_ tab
  3. Click _Add trigger_
- 4. Select _Event source type:_ __CloudWatchEvents - Schedule__ and provide the following details
- * _Rule name:_ __whatever unique name__
- * _Rule description:_ __optional description of the rule__
- * _Schedule expression:_ __rate(15 minutes)__
+ 4. Select _Event source type: _CloudWatchEvents - Schedule_ and provide the following details
+ * Rule name: _whatever unique name_
+ * Rule description:_optional description of the rule_
+ * Schedule expression: _rate(15 minutes)_
  5. Click _Submit_ to create schedule
  
