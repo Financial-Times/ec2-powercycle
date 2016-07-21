@@ -5,7 +5,7 @@
 # More information: http://docs.aws.amazon.com/cli/latest/reference/lambda/publish-version.html
 #
 # USAGE:
-# ./lambda-publish-version.sh <function_name>
+# ./lambda-publish-version.sh --function function_name
 
 source "$(dirname $0)/functions.sh" || exit 1
 
@@ -13,12 +13,14 @@ function publishVersion() {
     aws lambda publish-version  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]}
 }
 
-if [[ ! -z "$1" ]]; then
-    AWS_LAMBDA_FUNCTION="$1"
+if [[ ! -z "${CLI_ARGS[--function]}" ]]; then
+    AWS_LAMBDA_FUNCTION="${CLI_ARGS[--function]}"
 fi
 
+echo -e "\e[31mProcessing arguments\e[0m"
+processArguments ${*}
+echo -e "\e[31mProcessing credentials\e[0m"
 processCredentials
-
 echo -e "\e[31mExporting settings\e[0m"
 exportSettings
 echo -e "\e[31mVerifying Lambda function\e[0m"

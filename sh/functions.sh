@@ -3,6 +3,7 @@
 # Library of commonly used Bash functions
 
 declare -A SETTINGS
+declare -A CLI_ARGS
 
 function createLambdaAlias () {
     aws lambda create-alias --function-name $1 --name $2 --function-version $3 >/dev/null 
@@ -15,6 +16,7 @@ function errorAndExit() {
 
 function exportSettings () {
   for key in "${!SETTINGS[@]}"; do
+    #echo "Exporting ${key}=${SETTINGS[$key]}"
     export ${key}="${SETTINGS[$key]}"
   done
 }
@@ -53,6 +55,9 @@ function getKeyValueFromJSON () {
   # 
   # arg1 = file name to look up
   # arg2 = key to look up
+  #
+  # USAGE: export AWS_ACCESS_KEY_ID=$(getKeyValueFromJSON role.json AccessKeyId)
+  
   key=$2
   if [[ -f "$1" ]]; then
     value=$(sed -En "s/(.${key}.:.)//p" $1)
@@ -61,6 +66,22 @@ function getKeyValueFromJSON () {
         removeJSONmarkup $value
     fi
   fi     
+}
+
+function invokeFunction() {
+    OUTPUT="lambda-invoke-function.out"
+    
+    if [[ "${CLI_ARGS[dryrun]}" == "true" ]]; then
+        echo "Dryrun on"
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --payload '{ "DryRun": "True" }' ${OUTPUT}
+        RTNCODE="$?"
+        return ${RTNCODE}           
+    else
+        #echo "Invoking function ${SETTINGS[AWS_LAMBDA_FUNCTION]}"  
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT}
+        RTNCODE="$?"
+        return ${RTNCODE}
+    fi
 }
 
 function listVersions () {
@@ -98,7 +119,26 @@ function lstrip () {
     done
 }
 
-function processCredentials() {
+function printArguments() {
+    for key in "${!CLI_ARGS[@]}"; do
+      echo "${key}=${CLI_ARGS[$key]}"
+    done
+}
+
+function processArguments () {
+    # Process arguments and store them in associative array
+    # Odd arguments (1,3,5,etc) become the key
+    # Even arguments (2,4,6,etc) become the value
+    
+    while [[ ${#*} -gt "0" ]]; do
+        key=$(echo ${1} | tr -d '-') # Strip the -- prefix from cli argument. --file becomes file
+        CLI_ARGS[${key}]="${2}"
+        #echo "CLI_ARGS[${key}]=${2}"
+        shift && shift || errorAndExit "Odd number of arguments provided. Expecting even numner of key-value pairs, e.g. --key value." 1
+    done
+}
+
+function processCredentials () {
 
     # Lookup credentials from "${HOME}/.aws/credentials" if not provided as environment variables
     test -z ${AWS_ACCESS_KEY_ID} && AWS_ACCESS_KEY_ID=$(getKeyValueFromFile "${HOME}/.aws/credentials" "aws_access_key_id")

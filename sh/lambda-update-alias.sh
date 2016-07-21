@@ -4,7 +4,7 @@
 # This script excluded version $LATEST from the query. Only versions with proper version number are queried.
 #  
 # USAGE
-# ./lambda-update-alias <function_name> <alias_name> [version number]
+# ./lambda-update-alias --function function_name --alias alias_name --version version number
 # If version number is omitted then script will look up the latest version number
 
 
@@ -15,12 +15,14 @@ function updateAlias () {
 }
 
 
-if [[ ! -z "$1" ]]; then
-    AWS_LAMBDA_FUNCTION="$1"
+processArguments ${*}
+
+if [[ ! -z "${CLI_ARGS[function]}" ]]; then
+    AWS_LAMBDA_FUNCTION="${CLI_ARGS[function]}"
 fi
 
-if [[ ! -z "$2" ]]; then
-    AWS_LAMBDA_ALIAS="$2"
+if [[ ! -z "${CLI_ARGS[alias]}" ]]; then
+    AWS_LAMBDA_ALIAS="${CLI_ARGS[alias]}"
 fi
 
 processCredentials
@@ -30,19 +32,19 @@ exportSettings
 echo -e "\e[31mQuery Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}\e[0m"
 verifyLambdaFunction && echo -e "\e[31mLambda function found\e[0m"
 
-if [[ -z "$3" || "${3,,}" == "newest" ]]; then # Look up most recent version
+if [[ -z "${CLI_ARGS[version]}" || "${CLI_ARGS[version]}" == "newest" ]]; then # Look up most recent version
     version=$(listVersions "newest")
     if [[ -z ${version} ]]; then 
         errorAndExit "Failed to get latest version" 1
     fi
 
 else # check whether version exists
-    version=$(listVersions "$3")
-    if [[ -z "${version}" ]]; then
+    version_found=$(listVersions "${CLI_ARGS[--version]}")
+    if [[ -z "${version_found}" ]]; then
         errorAndExit "Version ${3} not found" 1
     else
         echo -e "\e[31mVersion $3 found\e[0m"
-        version=$3
+        version=${CLI_ARGS[version]}
     fi
          
 fi

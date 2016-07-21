@@ -3,38 +3,16 @@
 # Script executes Lambda function 
 #
 # USAGE:
-# ./lambda-invoke-function.sh <function_name> [DryRun]
+# ./lambda-invoke-function.sh --function function_name [--dryrun true]
 # More information: http://docs.aws.amazon.com/cli/latest/reference/lambda/invoke.html
-
-OUTPUT="lambda-invoke-function.out"
 
 source "$(dirname $0)/functions.sh" || exit 1
 
-function invokeFunction() {
-    if [[ "${SETTINGS[AWS_LAMBDA_DRYRUN]}" ]]; then
-        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --payload '{ "DryRun": "True" }' ${OUTPUT}
-        RTNCODE="$?"
-        return ${RTNCODE}           
-    else        
-        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} ${OUTPUT}
-        RTNCODE="$?"
-        return ${RTNCODE}
-    fi
-}
-
-if [[ ! -z "$1" ]]; then
-    AWS_LAMBDA_FUNCTION="$1"
-fi
-
-if [[ "$2" == "DryRun" ]]; then
-    SETTINGS[AWS_LAMBDA_DRYRUN]="0"
-    echo -e "\e[31mInvoke function ${SETTINGS[AWS_LAMBDA_FUNCTION]} in DryRun mode.\e[0m"
-fi
-
+processArguments ${*}
 processCredentials
 
 echo -e "\e[31mExporting settings\e[0m"
 exportSettings
 echo -e "\e[31mVerifying Lambda function\e[0m"
-verifyLambdaFunction && echo -e "\e[31mLambda function access OK\e[0m" || errorAndExit "Failed to access function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1
+verifyLambdaFunction && echo -e "\e[31mLambda function access OK\e[0m" || errorAndExit "Failed to access function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1s
 invokeFunction && echo -e "\e[31mLambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]} executed successfully\e[0m" || errorAndExit "Failed to run Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1

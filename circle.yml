@@ -12,10 +12,10 @@ deployment:
     branch: master
     commands:
       - ./sh/package.sh
-      - ./sh/lambda-deploy-latest.sh    
-      - ./sh/lambda-invoke-function.sh ec2-powercycle DryRun
+      - ./sh/lambda-deploy-latest.sh --file ec2-powercycle.zip    
+      - ./sh/lambda-invoke-function.sh --function ec2-powercycle --dryrun true
   release:
     tag: /release-.*/
     commands:
       - ./sh/lambda-publish-version.sh
-      - ./sh/lambda-update-alias.sh ec2-powercycle PROD   
+      - ./sh/lambda-update-alias.sh --function ec2-powercycle --alias PROD   
