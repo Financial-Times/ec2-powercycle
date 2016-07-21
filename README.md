@@ -219,7 +219,8 @@ Once deployment package has been created we can create a Lambda function and use
  5. In _Lambda function code_ section select _Upload a .ZIP file_ to upload ec2powercycle.zip package to Lambda
  6. In _Lambda function handler and role_ section set handler name _ec2_powercycle.handler_
  7. Select the role that has the above IAM policy attached to it
- 8. Click _Next_ and _Create function_
+ 8. Set _Timeout_ value 1 min
+ 9. Click _Next_ and _Create function_
   
 ### Scheduling Lambda function
 
