@@ -209,7 +209,7 @@ function strip () {
 }
 
 function verifyLambdaFunction () {
-  aws lambda get-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} || errorAndExit "Failed to verify access to Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1
+  aws lambda get-function --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} >/dev/null || errorAndExit "Failed to verify access to Lambda function ${SETTINGS[AWS_LAMBDA_FUNCTION]}" 1
 }
 
 function validateLambdaAlias () {

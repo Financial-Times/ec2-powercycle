@@ -20,7 +20,7 @@ JSON_OUT='role.json'
 
 
 processArguments ${*}
-printArguments
+#printArguments
 test -z ${CLI_ARGS[arn]} && errorAndExit "Usage: $(dirname $0)/iam-assume-role.sh --arn <role_arn> [--mock true]" 1
 processCredentials
 echo -e "\e[31mExporting settings\e[0m"
