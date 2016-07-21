@@ -20,7 +20,7 @@ Usage:
 To enable stop/start schedule on EC2 instance add tag businessHours: { "start": 0 8 * * *", "stop": "0 17 * * *" }
 
 Author: Jussi Heinonen 
-Date: 24.5.2016
+Date: 21.7.2016
 URL: https://github.com/jussi-ft/ec2-powercycle
 '''
 tag = 'ec2Powercycle' # Set resource tag
@@ -43,7 +43,8 @@ def getDesiredState(json_string):
         else:
             print 'Start event ' + str(starttime.get_prev(datetime)) + ' is more recent than stop event ' + str(stoptime.get_prev(datetime)) + '. Desired state: running'
             return 'running'
-    except Exception, e:        
+    except Exception, e:
+        print 'Error processing JSON document ' + str(e)        
         return False
 
 def get_resoure_tags(data):
