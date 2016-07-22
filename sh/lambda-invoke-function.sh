@@ -4,6 +4,7 @@
 #
 # USAGE:
 # ./lambda-invoke-function.sh --function function_name [--dryrun true] [--caa true]
+#
 # More information: http://docs.aws.amazon.com/cli/latest/reference/lambda/invoke.html
 
 source "$(dirname $0)/functions.sh" || exit 1

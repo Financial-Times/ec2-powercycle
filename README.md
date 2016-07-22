@@ -45,6 +45,12 @@ cd /path/to/repository
 python -c "from ec2_powercycle import * ; handler()"
 ```
 
+Function can be executed in so-called dryrun mode with the following command. 
+```
+python -c "from ec2_powercycle import * ; handler({ \"DryRun\": \"True\" })"
+```
+In dryrun mode function doesn't stop/start instances.
+
 ## Creating a Lambda Deployment Package
 
 EC2-POWERCYCLE uses 3rd party library called [Croniter](https://github.com/kiorky/croniter) which must be installed before deployment package is created.

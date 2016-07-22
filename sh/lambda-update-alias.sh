@@ -6,7 +6,8 @@
 # USAGE
 # ./lambda-update-alias --function function_name --alias alias_name --version version number
 # If version number is omitted then script will look up the latest version number
-
+#
+# More information: http://docs.aws.amazon.com/cli/latest/reference/lambda/update-alias.html
 
 source "$(dirname $0)/functions.sh" || exit 1
 

@@ -6,6 +6,8 @@
 # ./lambda-deploy-latest.sh --file ec2-cyclepower.zip --caa true 
 # <zip_file> defaults to ec2-powercycle.zip
 # caa: cross-account access flag, skip processCredentials function
+#
+# More information: http://docs.aws.amazon.com/cli/latest/reference/lambda/update-function-code.html
 
 source "$(dirname $0)/functions.sh" || exit 1 
 
