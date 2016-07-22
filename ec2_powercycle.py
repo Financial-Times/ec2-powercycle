@@ -26,8 +26,6 @@ URL: https://github.com/jussi-ft/ec2-powercycle
 tag = 'ec2Powercycle' # Set resource tag
 exclude_env_tags=['p'] # Value of the environment tags that should be excluded from powercycle  
 ec = boto3.client('ec2')
-startInstanceIds=[]
-stopInstanceIds=[]
 
 def getDesiredState(json_string):
     base = datetime.now()        
@@ -55,6 +53,8 @@ def get_resoure_tags(data):
     return tags
 
 def handler(event = False, context = False):
+    startInstanceIds=[]
+    stopInstanceIds=[]
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
     printBuildInfo()
     try:        
@@ -125,7 +125,7 @@ def handler(event = False, context = False):
             else:
                 print 'InstanceID ' + str(instance['InstanceId']) + ' already in desired state: ' + str(desired_state)        
         except Exception, e:
-            print 'Error: ' + str(e)
+            print 'Error: ' + str(e)           
     if len(startInstanceIds) > 0:
         manageInstance(startInstanceIds, 'start', dryrun)
         startInstanceIds = None # Unset variable
