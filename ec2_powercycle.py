@@ -128,8 +128,10 @@ def handler(event = False, context = False):
             print 'Error: ' + str(e)
     if len(startInstanceIds) > 0:
         manageInstance(startInstanceIds, 'start', dryrun)
+        startInstanceIds = None # Unset variable
     if len(stopInstanceIds) > 0:
         manageInstance(stopInstanceIds, 'stop', dryrun)
+        stopInstanceIds = None # Unset variable
     print '### END - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
       
 def manageInstance(idlist, action, dryrun):

@@ -113,7 +113,7 @@ Once you have completed Development work and wish to "promote" your code to Prod
 Use the following commands to create a tag and push it to repository.
 
 ```
-git tag -a release-12 -m "Repoint PROD alias to release-12 tag"
+git tag -a release-12 -m "Repoint LIVE alias to release-12 tag"
 git push origin release-12
 ```
 
