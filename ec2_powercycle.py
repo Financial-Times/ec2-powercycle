@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from croniter import croniter
+from datetime import datetime
+from functions import *
+from time import gmtime, strftime
 import boto3, re
 import collections
-from datetime import datetime
-from time import gmtime, strftime
-import pprint
 import json
-import sys, os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
-from croniter import croniter
+import pprint
 import requests
-from functions import *
+import sys, os
+
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
 
 '''
 Lambda function to stop and start EC2 instances
