@@ -1,5 +1,5 @@
-    #!/bin/python
-    # -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import boto3, re
 import collections
@@ -19,16 +19,16 @@ Lambda function to stop and start EC2 instances
 Usage:
 To enable stop/start schedule on EC2 instance add tag businessHours: { "start": 0 8 * * *", "stop": "0 17 * * *" }
 
-Author: Jussi Heinonen 
+Author: Jussi Heinonen
 Date: 21.7.2016
 URL: https://github.com/jussi-ft/ec2-powercycle
 '''
 tag = 'ec2Powercycle' # Set resource tag
-exclude_env_tags=['p'] # Value of the environment tags that should be excluded from powercycle  
+exclude_env_tags=['p'] # Value of the environment tags that should be excluded from powercycle
 ec = boto3.client('ec2')
 
 def getDesiredState(json_string):
-    base = datetime.now()        
+    base = datetime.now()
     try:
         schedule=json.loads(json_string)
         print 'Start schedule: ' + str(schedule['start'])
@@ -42,14 +42,14 @@ def getDesiredState(json_string):
             print 'Start event ' + str(starttime.get_prev(datetime)) + ' is more recent than stop event ' + str(stoptime.get_prev(datetime)) + '. Desired state: running'
             return 'running'
     except Exception, e:
-        print 'Error: ' + str(e)        
+        print 'Error: ' + str(e)
         return False
 
 def get_resoure_tags(data):
     tags = {}
     for item in data:
         tmplist = item.values()
-        tags[tmplist[1]] = tmplist[0] 
+        tags[tmplist[1]] = tmplist[0]
     return tags
 
 def handler(event = False, context = False):
@@ -57,7 +57,7 @@ def handler(event = False, context = False):
     stopInstanceIds=[]
     print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
     printBuildInfo()
-    try:        
+    try:
         if type(event) is str:
             data = json.loads(event)
             print 'event JSON doc loaded'
@@ -69,13 +69,13 @@ def handler(event = False, context = False):
     except Exception, e:
         dryrun = False
     if len(exclude_env_tags) > 0:
-        print 'Excluding instances with environment tag values: ' + str(exclude_env_tags) 
+        print 'Excluding instances with environment tag values: ' + str(exclude_env_tags)
     reservations = ec.describe_instances(
     Filters=[
     {'Name': 'tag:' + tag, 'Values': ['*'],
     }]
     ).get('Reservations', [])
-    
+
     instances = sum(
             [
                 [i for i in r['Instances']]
@@ -94,8 +94,8 @@ def handler(event = False, context = False):
         try:
             if re.search("http",resource_tags[tag]):
                 try:
-                    print 'Fetching document from ' + resource_tags[tag]                
-                    r = requests.get(resource_tags[tag])                
+                    print 'Fetching document from ' + resource_tags[tag]
+                    r = requests.get(resource_tags[tag])
                     resource_tags[tag] = json.dumps(r.json())
                 except Exception, e:
                     print 'Failed to load document ' + resource_tags[tag]
@@ -109,7 +109,7 @@ def handler(event = False, context = False):
                     else:
                         stopInstanceIds.append(instance['InstanceId'])
                 except Exception,e:
-                    print instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.'                             
+                    print instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.'
             elif desired_state == 'running' and str(instance['State']['Name']) == 'stopped':
                 print 'Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag]
                 print 'Current status of instance is: ' +  str(instance['State']['Name']) + ' . Starting instance.'
@@ -119,13 +119,13 @@ def handler(event = False, context = False):
                     else:
                         startInstanceIds.append(instance['InstanceId'])
                 except Exception,e:
-                    print instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.' 
+                    print instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.'
             elif not desired_state:
                 print 'Error processing JSON document: ' + resource_tags[tag] + ' on instance ' + instance['InstanceId']
             else:
-                print 'InstanceID ' + str(instance['InstanceId']) + ' already in desired state: ' + str(desired_state)        
+                print 'InstanceID ' + str(instance['InstanceId']) + ' already in desired state: ' + str(desired_state)
         except Exception, e:
-            print 'Error: ' + str(e)           
+            print 'Error: ' + str(e)
     if len(startInstanceIds) > 0:
         manageInstance(startInstanceIds, 'start', dryrun)
         startInstanceIds = None # Unset variable
@@ -133,7 +133,7 @@ def handler(event = False, context = False):
         manageInstance(stopInstanceIds, 'stop', dryrun)
         stopInstanceIds = None # Unset variable
     print '### END - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
-      
+
 def manageInstance(idlist, action, dryrun):
     if action == 'start':
         try:
@@ -165,11 +165,11 @@ def manageInstance(idlist, action, dryrun):
                 print '\t * ' + each
     else:
         print 'Got gibberish action ' + str(action) + ' and I do not know what to do'
-    
+
 def printBuildInfo():
     try:
         f = open('build.info', 'r')
         print f.read()
         f.close()
     except:
-        pass    
+        pass
