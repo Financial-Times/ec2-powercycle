@@ -14,163 +14,123 @@ import sys, os
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
 
-'''
-Lambda function to stop and start EC2 instances
 
-Usage:
-To enable stop/start schedule on EC2 instance add tag businessHours: { "start": 0 8 * * *", "stop": "0 17 * * *" }
+class Worker():
+    def __init__(self, **kwargs):
+        self.client = boto3.client('ec2')
+        self.now = datetime.now()
 
-Author: Jussi Heinonen
-Date: 21.7.2016
-URL: https://github.com/jussi-ft/ec2-powercycle
-'''
-tag = 'ec2Powercycle' # Set resource tag
-exclude_env_tags=['p'] # Value of the environment tags that should be excluded from powercycle
-ec = boto3.client('ec2')
+        self.exclude_env_tags = kwargs.get('exclude_env_tags', ['p'])
+        self.tag = kwargs.get('tag', 'ec2Powercycle')
+        self.dryrun = kwargs.get('dryrun', False)
+        self.log = kwargs.get('log', True)
 
-def getDesiredState(json_string):
-    base = datetime.now()
-    try:
-        schedule=json.loads(json_string)
-        print 'Start schedule: ' + str(schedule['start'])
-        print 'Stop schedule: ' + str(schedule['stop'])
-        starttime = croniter(schedule['start'], base)
-        stoptime = croniter(schedule['stop'], base)
-        if stoptime.get_prev(datetime) > starttime.get_prev(datetime):
-            print 'Stop event ' + str(stoptime.get_prev(datetime)) + ' is more recent than start event ' + str(starttime.get_prev(datetime)) + '. Desired state: stopped'
-            return 'stopped'
-        else:
-            print 'Start event ' + str(starttime.get_prev(datetime)) + ' is more recent than stop event ' + str(stoptime.get_prev(datetime)) + '. Desired state: running'
-            return 'running'
-    except Exception, e:
-        print 'Error: ' + str(e)
+        if self.log:
+            self._log('Initialised Worker instance')
+
+
+    def go(self):
+        start = []
+        stop = []
+        remove = []
+
+        if self.log:
+            self._log('Taking care of business')
+
+        for reservation in self.reservations():
+            for instance in reservation['instances']:
+                if self.log:
+                    self._log("Interrogating {}".format(instance['InstanceId']))
+
+                if self.is_start(instance):
+                    start.extend(instance['InstanceId'])
+                if self.is_stop(instance):
+                    stop.extend(instance['InstanceId'])
+                if self.is_remove(instance):
+                    remove.extend(instance['InstanceId'])
+
+        self.start(start)
+        self.stop(stop)
+        self.remove(remove)
+
+
+    def reservations(self):
+        return self.client.describe_instances(
+            Filters=[
+                {
+                    'Name': 'tag:' + self.tag, 'Values': ['*'],
+                }
+            ]
+        ).get('Reservations', [])
+
+
+    def is_start(self, instance):
+        return self._is_state(instance, 'start')
+
+
+    def is_stop(self, instance):
+        return self._is_state(instance, 'stop')
+
+
+    def is_remove(self, instance):
+        return self._is_state(instance, 'remove')
+
+
+    def start(self, instances):
+        self._set_instances_state(instances, 'start')
+
+
+    def stop(self, instances):
+        self._set_instances_state(instances, 'stop')
+
+
+    def remove(self, instances):
+        self._set_instances_state(instances, 'remove')
+
+
+    def _is_state(self, instance, state):
+        t = self._parse_tags(instance['Tags'])
+        if t:
+            return self._is_time(t[state]) and instance['State']['Name'] in {'start': ['Stopped', 'Stopping'],
+                                                                            'stop': ['Started', 'Starting'],
+                                                                            'remove': ['Stopped', 'Started']}[state]
         return False
 
-def get_resoure_tags(data):
-    tags = {}
-    for item in data:
-        tmplist = item.values()
-        tags[tmplist[1]] = tmplist[0]
-    return tags
 
-def handler(event = False, context = False):
-    startInstanceIds=[]
-    stopInstanceIds=[]
-    print '### START - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
-    printBuildInfo()
-    try:
-        if type(event) is str:
-            data = json.loads(event)
-            print 'event JSON doc loaded'
-        else:
-            data = event
-        if data['DryRun'] in 'True':
-            dryrun = True
-            print 'DryRun is ' + str(dryrun)
-    except Exception, e:
-        dryrun = False
-    if len(exclude_env_tags) > 0:
-        print 'Excluding instances with environment tag values: ' + str(exclude_env_tags)
-    reservations = ec.describe_instances(
-    Filters=[
-    {'Name': 'tag:' + tag, 'Values': ['*'],
-    }]
-    ).get('Reservations', [])
+    def _parse_tags(self, tags):
+        if not self._is_ignored(tags):
+            return next( (json.loads(item['Value']) for item in tags if item['Key'] == self.tag), None)
+        return None
 
-    instances = sum(
-            [
-                [i for i in r['Instances']]
-                for r in reservations
-            ], [])
-    print 'Found ' + str(len(instances)) + ' instances with tag ' + tag
-    if len(instances) > 0:
-        print "InstanceIDs with tag " + tag + ':'
-        for element in instances:
-            print '\t * ' + str(element['InstanceId'])
-    for instance in instances:
-        #print 'instance details'
-        print '________________'
-        #pprint.pprint(instance)
-        resource_tags = get_resoure_tags(instance['Tags'])
-        try:
-            if re.search("http",resource_tags[tag]):
-                try:
-                    print 'Fetching document from ' + resource_tags[tag]
-                    r = requests.get(resource_tags[tag])
-                    resource_tags[tag] = json.dumps(r.json())
-                except Exception, e:
-                    print 'Failed to load document ' + resource_tags[tag]
-            desired_state=getDesiredState(resource_tags[tag])
-            if desired_state == 'stopped' and str(instance['State']['Name']) == 'running':
-                print 'Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag]
-                print 'Current status of instance is: ' +  str(instance['State']['Name']) + ' . Stopping instance.'
-                try:
-                    if resource_tags['environment'] in exclude_env_tags:
-                        print instance['InstanceId'] + ' has environment tag ' +  resource_tags['environment'] + ' . Excluding from powercycle.'
-                    else:
-                        stopInstanceIds.append(instance['InstanceId'])
-                except Exception,e:
-                    print instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.'
-            elif desired_state == 'running' and str(instance['State']['Name']) == 'stopped':
-                print 'Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag]
-                print 'Current status of instance is: ' +  str(instance['State']['Name']) + ' . Starting instance.'
-                try:
-                    if resource_tags['environment'] in exclude_env_tags:
-                        print instance['InstanceId'] + ' has environment tag ' +  resource_tags['environment'] + ' . Excluding from powercycle.'
-                    else:
-                        startInstanceIds.append(instance['InstanceId'])
-                except Exception,e:
-                    print instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.'
-            elif not desired_state:
-                print 'Error processing JSON document: ' + resource_tags[tag] + ' on instance ' + instance['InstanceId']
-            else:
-                print 'InstanceID ' + str(instance['InstanceId']) + ' already in desired state: ' + str(desired_state)
-        except Exception, e:
-            print 'Error: ' + str(e)
-    if len(startInstanceIds) > 0:
-        manageInstance(startInstanceIds, 'start', dryrun)
-        startInstanceIds = None # Unset variable
-    if len(stopInstanceIds) > 0:
-        manageInstance(stopInstanceIds, 'stop', dryrun)
-        stopInstanceIds = None # Unset variable
-    print '### END - ' + strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()) + ' ###'
 
-def manageInstance(idlist, action, dryrun):
-    if action == 'start':
-        try:
-            response = ec.start_instances(
-                InstanceIds=idlist,
-                DryRun=dryrun
-                )
-            print 'AWS response: ' + str(response)
-            print 'Start_instances command issued for the following instances'
-            for each in idlist:
-                print '\t * ' + each
-        except Exception, e:
-            print 'Failed to issue start_instances command to list of instances: ' + str(e)
-            for each in idlist:
-                print '\t * ' + each
-    elif action == 'stop':
-        try:
-            response = ec.stop_instances(
-                InstanceIds=idlist,
-                DryRun=dryrun
-                )
-            print 'AWS response: ' + str(response)
-            print 'Stop_instances command issued for the following instances'
-            for each in idlist:
-                print '\t * ' + each
-        except Exception, e:
-            print 'Failed to issue stop_instances command to list of instances: ' + str(e)
-            for each in idlist:
-                print '\t * ' + each
-    else:
-        print 'Got gibberish action ' + str(action) + ' and I do not know what to do'
+    def _is_time(self, cron):
+        return self.now >= croniter(cron, self.now).get_next(datetime)
 
-def printBuildInfo():
-    try:
-        f = open('build.info', 'r')
-        print f.read()
-        f.close()
-    except:
-        pass
+
+    def _is_ignored(self, tags):
+        return next( (item['Value'] in self.exclude_env_tags for item in tags if item['Key'] == 'environment'), False)
+
+
+    def _set_instances_state(self, instances, state):
+        if len(instances) == 0:
+            return
+
+        if self.log:
+            self._log("Setting instances '{}' to state {}".format((', ').join(instances), state))
+
+        {'start': self.client.start_instances,
+         'stop': self.client.stop_instances,
+         'remove': self.client.terminate_instances}[state](
+             InstanceIds = instances,
+             DryRun = self.dryrun
+         )
+
+    def _log(self, message):
+        print "{}: {}".format(self.now, message)
+
+def handler(event, context):
+    Worker().go()
+
+
+if __name__ == '__main__':
+    handler({}, {})
