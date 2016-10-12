@@ -16,14 +16,14 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
 
 
 class Worker():
-    def __init__(self, **kwargs):
+    def __init__(self, event):
         self.client = boto3.client('ec2')
         self.now = datetime.now()
 
-        self.exclude_env_tags = kwargs.get('exclude_env_tags', ['p'])
-        self.tag = kwargs.get('tag', 'ec2Powercycle')
-        self.dryrun = kwargs.get('dryrun', False)
-        self.log = kwargs.get('log', True)
+        self.exclude_env_tags = event.get('exclude_env_tags', ['p'])
+        self.tag = event.get('tag', 'ec2Powercycle')
+        self.dryrun = event.get('dryrun', False)
+        self.log = event.get('log', True)
 
         if self.log:
             self._log('Initialised Worker instance')
@@ -99,7 +99,13 @@ class Worker():
 
     def _parse_tags(self, tags):
         if not self._is_ignored(tags):
-            return next( (json.loads(item['Value']) for item in tags if item['Key'] == self.tag), None)
+            v = next( (item['Value'] for item in tags if item['Key'] == self.tag), None)
+
+            if self._is_uri(v):
+                v = _get_json_tag(v)
+
+            if v != None:
+                return json.loads(v)
         return None
 
 
@@ -125,11 +131,26 @@ class Worker():
              DryRun = self.dryrun
          )
 
+
+    def _is_uri(self, string):
+        return re.match("^(https?|ftp)://[^\s/$.?#].[^\s]*$", string) != None
+
+
+    def _get_json_tag(self, url):
+        log("Loading tag from {}".format(url))
+        try:
+            return requests.get(url)
+        except Exception, e:
+            log(e.message)
+
+        return None
+
+
     def _log(self, message):
-        print "{}: {}".format(self.now, message)
+        print "{}: {}".format(datetime.now(), message)
 
 def handler(event, context):
-    Worker().go()
+    Worker(event).go()
 
 
 if __name__ == '__main__':
