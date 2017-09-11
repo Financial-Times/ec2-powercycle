@@ -170,14 +170,18 @@ The following policy example enables Lambda function to access the following AWS
         },
         {
             "Effect": "Allow",
-            "Action": "ec2:Describe*",
-            "Resource": "*"
+            "Action": [
+              "ec2:Describe*",
+              "autoscaling:Describe*"
+             ],
+            "Resource": "*",
         },
         {
             "Effect": "Allow",
             "Action": [
                 "ec2:StartInstances",
-                "ec2:StopInstances"
+                "ec2:StopInstances",
+                "autoscaling:UpdateAutoScalingGroup"
             ],
             "Condition": {
                 "StringLike": {
