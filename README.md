@@ -156,44 +156,59 @@ The following policy example enables Lambda function to access the following AWS
   
 ```
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                 "logs:DescribeLogStreams"
-            ],
-            "Resource": "arn:aws:logs:*:*:*"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:Describe*",
+        "autoscaling:Describe*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "autoscaling:UpdateAutoScalingGroup"
+      ],
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/ec2Powercycle": "*"
         },
-        {
-            "Effect": "Allow",
-            "Action": [
-              "ec2:Describe*",
-              "autoscaling:Describe*"
-             ],
-            "Resource": "*",
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:StartInstances",
-                "ec2:StopInstances",
-                "autoscaling:UpdateAutoScalingGroup"
-            ],
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/ec2Powercycle": "*"
-                },
-                "StringNotEqualsIgnoreCase": {
-                    "ec2:ResourceTag/environment": "p"
-                }
-            },
-            "Resource": "arn:aws:ec2:*:*:instance/*"
+        "StringNotEqualsIgnoreCase": {
+          "ec2:ResourceTag/environment": "p"
         }
-    ]
+      },
+      "Resource": "arn:aws:ec2:*:*:instance/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:UpdateAutoScalingGroup"
+      ],
+      "Condition": {
+        "StringLike": {
+          "autoscaling:ResourceTag/ec2Powercycle": "*"
+        },
+        "StringNotEqualsIgnoreCase": {
+          "autoscaling:ResourceTag/environment": "p"
+        }
+      },
+      "Resource": "*"
+    }
+  ]
 }
 ```
 
