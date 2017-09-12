@@ -15,14 +15,26 @@ _AWS Lambda function to stop and start EC2 instances based on resource tag using
 
 ## Usage
 
-Lambda function looks for EC2 instances that has a resource tag _ec2Powewrcycle_ attached to it.
+Lambda function looks for EC2 instances and Auto Scaling Groups that has a resource tag _ec2Powewrcycle_ attached to it.
 
-Tag value is simple JSON document that describes start and stop schedule in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).
+Tag value is simple JSON document that describes start and stop schedule in [crontab-like expressions](http://en.wikipedia.org/wiki/Cron).  
+In case of ASGs, the tag may also contain information about the scaling state of the group (min and desired instances in the group). 
+If it doesn't, then the min and the desired instances are defaulted both to 1.
 
-### Example stop/start schedule: Mon - Fri, 8.00am - 5.55pm
-```
-ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
-```
+### Examples 
+1. EC2 instance stop/start schedule: Mon - Fri, 8.00am - 5.55pm
+    ```
+    ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
+    ```
+1. Auto Scaling Group stop/start schedule: Mon-Fri, 9:00am - 11:00pm. Min no of instances in ASG is 2 and desired no is 3
+    ```
+    ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "00 23 * * 1-5", "min": 2, "desired": 3 }
+    ```
+1. Auto Scaling Group without scaling state specified. This will default to Min no of instance in ASG to 1 and the desired no to 1
+    ```
+    ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
+    ```
+
 
 As of [commit 00389de](https://github.com/Financial-Times/ec2-powercycle/commit/00389defafe30d1a85627a35713640a6e150e7e7) the stop/start schedule can be defined as an URL to publicly accessible JSON document. This feature can be handy when managing schedule for large number of nodes.
 ```
@@ -144,40 +156,58 @@ The following policy example enables Lambda function to access the following AWS
   
 ```
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-                 "logs:DescribeLogStreams"
-            ],
-            "Resource": "arn:aws:logs:*:*:*"
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:Describe*",
+        "autoscaling:Describe*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances"
+      ],
+      "Condition": {
+        "StringLike": {
+          "ec2:ResourceTag/ec2Powercycle": "*"
         },
-        {
-            "Effect": "Allow",
-            "Action": "ec2:Describe*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:StartInstances",
-                "ec2:StopInstances"
-            ],
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/ec2Powercycle": "*"
-                },
-                "StringNotEqualsIgnoreCase": {
-                    "ec2:ResourceTag/environment": "p"
-                }
-            },
-            "Resource": "arn:aws:ec2:*:*:instance/*"
+        "StringNotEqualsIgnoreCase": {
+          "ec2:ResourceTag/environment": "p"
         }
-    ]
+      },
+      "Resource": "arn:aws:ec2:*:*:instance/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "autoscaling:UpdateAutoScalingGroup"
+      ],
+      "Condition": {
+        "StringLike": {
+          "autoscaling:ResourceTag/ec2Powercycle": "*"
+        },
+        "StringNotEqualsIgnoreCase": {
+          "autoscaling:ResourceTag/environment": "p"
+        }
+      },
+      "Resource": "*"
+    }
+  ]
 }
 ```
 
