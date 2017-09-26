@@ -98,21 +98,24 @@ def handle_auto_scaling_groups(dryrun):
 
 def process_raw_groups(raw_groups, dryrun):
     for group in raw_groups:
-        print('________________')
-        print("Processing ASG: {}".format(group['AutoScalingGroupName']))
-        group_tags = get_resource_tags(group['Tags'])
+        try:
+            print('________________')
+            print("Processing ASG: {}".format(group['AutoScalingGroupName']))
+            group_tags = get_resource_tags(group['Tags'])
 
-        if tag in group_tags:
-            print("Found ASG '{}' with tag {}. Processing it".format(group['AutoScalingGroupName'], tag))
-            process_tagged_group(group, group_tags, dryrun)
-        else:
-            print("ASG {} doesn't have the {} tag. Skipping it... ".format(group['AutoScalingGroupName'], tag))
+            if tag in group_tags:
+                print("Found ASG '{}' with tag {}. Processing it".format(group['AutoScalingGroupName'], tag))
+                process_tagged_group(group, group_tags, dryrun)
+            else:
+                print("ASG {} doesn't have the {} tag. Skipping it... ".format(group['AutoScalingGroupName'], tag))
+        except Exception, e:
+            print('Error: while processing ASG ' + group['AutoScalingGroupName'] + ": " + str(e))
 
 
 def process_tagged_group(group, group_tags, dryrun):
     group_name = get_group_name(group)
 
-    # Check if ww should process the ASG based on the environment tag
+    # Check if we should process the ASG based on the environment tag
     if ENV_TAG not in group_tags:
         print("ASG {} is missing the environment type through the {} tag. Excluding it from power cycle... ".format(group_name, tag))
         return
@@ -129,17 +132,27 @@ def process_tagged_group(group, group_tags, dryrun):
     bring_asg_to_desired_state(group, group_tags, desired_state, dryrun)
 
 
-def get_asg_scaling_state(group_tags):
+def get_asg_scaling_state(group, group_tags):
     scaling_state = json.loads(group_tags[tag])  # reading the scaling state from the same ec2 power cycle tag
     min_size = 1  # default value for min
     desired_capacity = 1  # default value for desired state
+    max_size = group['MaxSize'] # keep the current set max size
     if 'min' in scaling_state:
         min_size = scaling_state['min']
 
     if 'desired' in scaling_state:
         desired_capacity = scaling_state['desired']
 
-    return {'min': min_size, 'desired': desired_capacity}
+    if min_size > desired_capacity:
+        print('Min ' + str(min_size) + ' was set bigger than desired ' + str(desired_capacity) +
+              '. Setting min to desired')
+        min_size = desired_capacity
+    if desired_capacity > max_size:
+        print('Desired ' + str(desired_capacity) + ' is set bigger than the current max value ' + str(max_size) +
+              '. Setting max to desired')
+        max_size = desired_capacity
+
+    return {'min': min_size, 'desired': desired_capacity, 'max': max_size}
 
 
 def get_group_name(group):
@@ -157,13 +170,14 @@ def bring_asg_to_desired_state(group, group_tags, desired_state, dryrun):
             aws_scaling_client.update_auto_scaling_group(AutoScalingGroupName=group_name, MinSize=0, DesiredCapacity=0)
 
     elif desired_state == 'running' and not is_asg_up(group):
-        desired_scaling_state = get_asg_scaling_state(group_tags)
+        desired_scaling_state = get_asg_scaling_state(group, group_tags)
         print('Scaling up ASG ' + group_name + ' to: ' + str(desired_scaling_state))
         if not dryrun:
             aws_scaling_client.update_auto_scaling_group(
                 AutoScalingGroupName=group_name,
                 MinSize=desired_scaling_state['min'],
-                DesiredCapacity=desired_scaling_state['desired'])
+                DesiredCapacity=desired_scaling_state['desired'],
+                MaxSize=desired_scaling_state['max'])
     else:
         print('ASG ' + group_name + ' is already in the desired state ' + desired_state)
 
