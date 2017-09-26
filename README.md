@@ -34,6 +34,10 @@ If it doesn't, then the min and the desired instances are defaulted both to 1.
     ```
     ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
     ```
+1. Auto Scaling Group without min state specified. This will default to Min no of instance in ASG to 1.
+    ```
+    ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5", "desired": 3 }
+    ```
 
 
 As of [commit 00389de](https://github.com/Financial-Times/ec2-powercycle/commit/00389defafe30d1a85627a35713640a6e150e7e7) the stop/start schedule can be defined as an URL to publicly accessible JSON document. This feature can be handy when managing schedule for large number of nodes.
