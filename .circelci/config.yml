@@ -27,8 +27,8 @@ jobs:
             ./sh/lambda-invoke-function.sh --function ec2-powercycle --dryrun true
             ./sh/iam-assume-role-and-deploy.sh
 
-    deploy-releases:
-      machine:
+  deploy-releases:
+    machine:
       enable: true
     working_directory: ~/ec2-powercycle
     environment:
