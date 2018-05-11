@@ -1,5 +1,7 @@
 # EC2-POWERCYCLE
 
+[![Circle CI](https://circleci.com/gh/Financial-Times/ec2-powercycle/tree/master.png?style=shield)](https://circleci.com/gh/Financial-Times/ec2-powercycle/tree/master)
+
 _AWS Lambda function to stop and start EC2 instances based on resource tag using crontab-like expressions_
 
 
