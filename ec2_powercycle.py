@@ -23,7 +23,7 @@ Author: Jussi Heinonen
 Date: 21.7.2016
 URL: https://github.com/jussi-ft/ec2-powercycle
 '''
-tag = 'ec2Powercycle'  # Set resource tag
+tag = 'asgLifecycle'  # Set resource tag
 ENV_TAG = 'environment'  # The name of the AWS tag holding the type of environment.
 exclude_env_tags = ['p']  # Value of the environment tags that should be excluded from powercycle
 ec = boto3.client('ec2')
