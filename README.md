@@ -26,19 +26,19 @@ If it doesn't, then the min and the desired instances are defaulted both to 1.
 ### Examples 
 1. EC2 instance stop/start schedule: Mon - Fri, 8.00am - 5.55pm
     ```
-    ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
+    asgLifecycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
     ```
 1. Auto Scaling Group stop/start schedule: Mon-Fri, 9:00am - 11:00pm. Min no of instances in ASG is 2 and desired no is 3
     ```
-    ec2Powercycle: { "start": "0 9 * * 1-5", "stop": "00 23 * * 1-5", "min": 2, "desired": 3 }
+    asgLifecycle: { "start": "0 9 * * 1-5", "stop": "00 23 * * 1-5", "min": 2, "desired": 3 }
     ```
 1. Auto Scaling Group without scaling state specified. This will default to Min no of instance in ASG to 1 and the desired no to 1
     ```
-    ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
+    asgLifecycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5" }
     ```
 1. Auto Scaling Group without min state specified. This will default to Min no of instance in ASG to 1.
     ```
-    ec2Powercycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5", "desired": 3 }
+    asgLifecycle: { "start": "0 8 * * 1-5", "stop": "55 17 * * 1-5", "desired": 3 }
     ```
 
 
