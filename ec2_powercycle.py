@@ -42,7 +42,7 @@ def handler(event = False, context = False):
         if data['DryRun'] in 'True':
             dryrun = True
             print('DryRun is ' + str(dryrun))
-    except Exception, e:
+    except Exception as e:
         dryrun = False
     if len(exclude_env_tags) > 0:
         print('Excluding instances with environment tag values: ' + str(exclude_env_tags))
@@ -67,7 +67,7 @@ def getDesiredState(json_string):
         else:
             print('Start event ' + str(starttime.get_prev(datetime)) + ' is more recent than stop event ' + str(stoptime.get_prev(datetime)) + '. Desired state: running')
             return 'running'
-    except Exception, e:
+    except Exception as e:
         print('Error: ' + str(e))
         return False
 
@@ -108,7 +108,7 @@ def process_raw_groups(raw_groups, dryrun):
                 process_tagged_group(group, group_tags, dryrun)
             else:
                 print("ASG {} doesn't have the {} tag. Skipping it... ".format(group['AutoScalingGroupName'], tag))
-        except Exception, e:
+        except Exception as e:
             print('Error: while processing ASG ' + group['AutoScalingGroupName'] + ": " + str(e))
 
 
@@ -226,7 +226,7 @@ def handle_ec2_instances(dryrun):
                         print(instance['InstanceId'] + ' has environment tag ' +  resource_tags[ENV_TAG] + ' . Excluding from powercycle.')
                     else:
                         stopInstanceIds.append(instance['InstanceId'])
-                except Exception,e:
+                except Exception as e:
                     print(instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.')
             elif desired_state == 'running' and str(instance['State']['Name']) == 'stopped':
                 print('Instance ' + instance['InstanceId'] + ' business hours are ' + resource_tags[tag])
@@ -236,13 +236,13 @@ def handle_ec2_instances(dryrun):
                         print(instance['InstanceId'] + ' has environment tag ' +  resource_tags[ENV_TAG] + ' . Excluding from powercycle.')
                     else:
                         startInstanceIds.append(instance['InstanceId'])
-                except Exception,e:
+                except Exception as e:
                     print(instance['InstanceId'] + ' is missing environment tag. Excluding from powercycle.')
             elif not desired_state:
                 print('Error processing JSON document: ' + resource_tags[tag] + ' on instance ' + instance['InstanceId'])
             else:
                 print('InstanceID ' + str(instance['InstanceId']) + ' already in desired state: ' + str(desired_state))
-        except Exception, e:
+        except Exception as e:
             print('Error: ' + str(e))
     if len(startInstanceIds) > 0:
         manageInstance(startInstanceIds, 'start', dryrun)
@@ -261,7 +261,7 @@ def inline_schedule_tag_from_remote_url(resource_tags):
             print('Fetching document from ' + resource_tags[tag])
             r = requests.get(resource_tags[tag])
             resource_tags[tag] = json.dumps(r.json())
-        except Exception, e:
+        except Exception as e:
             print('Failed to load document ' + resource_tags[tag])
 
 
@@ -276,7 +276,7 @@ def manageInstance(idlist, action, dryrun):
             print('Start_instances command issued for the following instances')
             for each in idlist:
                 print('\t * ' + each)
-        except Exception, e:
+        except Exception as e:
             print('Failed to issue start_instances command to list of instances: ' + str(e))
             for each in idlist:
                 print('\t * ' + each)
@@ -290,7 +290,7 @@ def manageInstance(idlist, action, dryrun):
             print('Stop_instances command issued for the following instances')
             for each in idlist:
                 print('\t * ' + each)
-        except Exception, e:
+        except Exception as e:
             print('Failed to issue stop_instances command to list of instances: ' + str(e))
             for each in idlist:
                 print('\t * ' + each)
