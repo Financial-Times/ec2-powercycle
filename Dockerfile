@@ -1,9 +1,20 @@
-FROM alpine
+FROM python:3.7-alpine
 
-RUN apk --update add py3-pip gcc python3-dev libffi-dev openssl-dev build-base bash jq util-linux curl git zip \
-    && pip3 install ansible boto3 awscli requests
+RUN apk add --update \
+    bash \
+    build-base \
+    curl \
+    gcc \
+    git \
+    jq \
+    libffi-dev \
+    openssl-dev \
+    python3-dev \
+    util-linux \
+    zip
+
+RUN pip3 install awscli
 
 ADD ./sh/*.sh /sh/
 
-CMD /bin/bash sh/package.sh && /bin/bash sh/lambda-deploy-latest.sh && /bin/bash sh/lambda-invoke-function.sh ec2-powercycle DryRun
-#CMD /bin/bash
+CMD /bin/bash sh/package.sh && /bin/bash sh/lambda-deploy-latest.sh --file ec2-powercycle.zip && /bin/bash sh/lambda-invoke-function.sh ec2-powercycle DryRun
