@@ -12,7 +12,7 @@ jobs:
 
   deploy-master:
     machine:
-      enable: true
+      image: ubuntu-2004:202010-01
     working_directory: ~/ec2-powercycle
     environment:
       AWS_DEFAULT_REGION: eu-west-1
@@ -29,7 +29,7 @@ jobs:
 
   deploy-releases:
     machine:
-      enable: true
+      image: ubuntu-2004:202010-01
     working_directory: ~/ec2-powercycle
     environment:
       AWS_DEFAULT_REGION: eu-west-1
