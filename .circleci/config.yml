@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    docker: 
+    docker:
       - image: docker:stable-git
     working_directory: ~/ec2-powercycle
     steps:
@@ -9,7 +9,20 @@ jobs:
       - run:
           name: Change permissions on the file
           command: chmod 755 sh/*.sh
-
+  test:
+    machine:
+      image: ubuntu-2004:202010-01
+    working_directory: ~/ec2-powercycle
+    environment:
+      AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+      AWS_LAMBDA_FUNCTION: ec2-powercycle
+      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev
+    steps:
+      - checkout
+      - run:
+          command: |
+            echo "$AWS_DEFAULT_REGION"
+            echo "$AWS_LAMBDA_FUNCTION"
   deploy-master:
     machine:
       image: ubuntu-2004:202010-01
@@ -17,7 +30,7 @@ jobs:
     environment:
       AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
       AWS_LAMBDA_FUNCTION: ec2-powercycle
-      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev 
+      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev
     steps:
       - checkout
       - run:
@@ -35,7 +48,7 @@ jobs:
     environment:
       AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
       AWS_LAMBDA_FUNCTION: ec2-powercycle
-      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev 
+      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev
     steps:
       - checkout
       - run:
@@ -49,6 +62,12 @@ workflows:
   build-and-deploy:
     jobs:
       - build
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: feature/UPPSF-3187-update-ec-2-powercycle-deploy-jobs-in-circle-ci
       - deploy-master:
           requires:
             - build
