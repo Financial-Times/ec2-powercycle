@@ -13,7 +13,7 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     working_directory: ~/ec2-powercycle
-    aws-cli/setup:
+    environment:
       AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
       AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
       AWS_DEFAULT_REGION: eu-west-1
