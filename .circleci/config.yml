@@ -14,7 +14,7 @@ jobs:
       image: ubuntu-2004:202010-01
     working_directory: ~/ec2-powercycle
     environment:
-      AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+      AWS_DEFAULT_REGION: \\$AWS_DEFAULT_REGION
       AWS_LAMBDA_FUNCTION: ec2-powercycle
       AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev
     steps:
