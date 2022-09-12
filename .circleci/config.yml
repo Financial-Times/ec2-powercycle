@@ -21,7 +21,8 @@ jobs:
       - checkout
       - run:
           command: |
-            echo "$AWS_DEFAULT_REGION"
+            echo "$AWS_DEFAULT_REGION" >> test
+            cat test
             echo "$AWS_LAMBDA_FUNCTION"
   deploy-master:
     machine:
