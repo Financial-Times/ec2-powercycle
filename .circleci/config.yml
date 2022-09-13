@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run:
           command: |
-            echo "$MARTIN_TEST"
+            aws s3 ls s3://upp-concept-normalised-store-k8s
   deploy-master:
     machine:
       image: ubuntu-2004:202010-01
