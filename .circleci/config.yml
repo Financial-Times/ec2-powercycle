@@ -9,19 +9,7 @@ jobs:
       - run:
           name: Change permissions on the file
           command: chmod 755 sh/*.sh
-  test:
-    machine:
-      image: ubuntu-2004:202010-01
-    working_directory: ~/ec2-powercycle
-    environment:
-      AWS_DEFAULT_REGION: eu-west-1
-      AWS_LAMBDA_FUNCTION: ec2-powercycle
-      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev
-    steps:
-      - checkout
-      - run:
-          command: |
-            aws s3 ls s3://upp-concept-normalised-store-k8s
+
   deploy-master:
     machine:
       image: ubuntu-2004:202010-01
@@ -59,21 +47,17 @@ workflows:
   build-and-deploy:
     jobs:
       - build
-      - test:
-          context:
-            - ec2-powercycle-test
-          requires:
-            - build
-          filters:
-            branches:
-              only: feature/UPPSF-3187-update-ec-2-powercycle-deploy-jobs-in-circle-ci
       - deploy-master:
+          context:
+            - ec2-powercycle-prod
           requires:
             - build
           filters:
             branches:
               only: master
       - deploy-releases:
+          context:
+            - ec2-powercycle-test
           requires:
             - build
           filters:
