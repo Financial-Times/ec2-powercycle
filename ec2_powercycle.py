@@ -11,7 +11,9 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib')
 from croniter import croniter
 import requests
-
+'''
+testing circleCI pipeline
+'''
 '''
 Lambda function to stop and start EC2 instances
 
