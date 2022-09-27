@@ -61,7 +61,8 @@ workflows:
           requires:
             - build
           filters:
-            tags:
-              only: feature/UPPSF-3187-update-ec-2-powercycle-deploy-jobs-in-circle-ci
+            #tags:
+            #  only: /release-.*/
             branches:
-              ignore: /.*/
+              only: feature/UPPSF-3187-update-ec-2-powercycle-deploy-jobs-in-circle-ci
+              #ignore: /.*/
