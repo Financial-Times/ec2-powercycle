@@ -17,7 +17,6 @@ jobs:
     environment:
       AWS_DEFAULT_REGION: eu-west-1
       AWS_LAMBDA_FUNCTION: ec2-powercycle
-      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev
     steps:
       - checkout
       - run:
