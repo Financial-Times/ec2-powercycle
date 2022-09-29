@@ -84,7 +84,7 @@ function invokeFunction() {
     
     if [[ "${CLI_ARGS[dryrun]}" == "true" ]]; then
         echo "Dryrun on"
-        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --payload '{ "DryRun": "True" }' ${OUTPUT}
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --cli-binary-format raw-in-base64-out --payload '{ "DryRun": "True" }' ${OUTPUT}
         RTNCODE="$?"
         return ${RTNCODE}           
     else
