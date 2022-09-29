@@ -39,10 +39,9 @@ jobs:
           command: |
             ./sh/package.sh
             ./sh/lambda-publish-version.sh
-#            ./sh/lambda-update-alias.sh --function ec2-powercycle --alias LIVE
             ./sh/lambda-deploy-latest.sh --file ec2-powercycle.zip
             ./sh/lambda-invoke-function.sh --function ec2-powercycle --dryrun true
-#           ./sh/iam-assume-role-and-release.sh  --function ec2-powercycle --alias LIVE
+
 workflows:
   version: 2
   build-and-deploy:
