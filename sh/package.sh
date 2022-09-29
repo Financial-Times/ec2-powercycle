@@ -7,7 +7,7 @@ CLONE_URL="https://github.com/Financial-Times/ec2-powercycle.git"
 BUILD_INFO="build.info"
 
 test -d ${ROOT_DIR} && rm -rf ${ROOT_DIR}
-git clone ${CLONE_URL} ${ROOT_DIR} && echo -e "\e[31mRepository cloned \e[0m" || exit 1
+git clone -b feature/UPPSF-3187-update-ec-2-powercycle-deploy-jobs-in-circle-ci ${CLONE_URL} ${ROOT_DIR} && echo -e "\e[31mRepository cloned \e[0m" || exit 1
 cd ${ROOT_DIR}
 pip3 install -r requirements.txt -t lib/ && echo -e "\e[31mDependencies installed \e[0m" || exit 1
 echo -e "Build: ${CIRCLE_BUILD_URL}\\nRepository: ${CIRCLE_REPOSITORY_URL}" > ${BUILD_INFO}
