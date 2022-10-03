@@ -21,11 +21,11 @@ jobs:
       - checkout
       - run:
           command: |
-            ./sh/package.sh
-            ./sh/lambda-deploy-latest.sh --file ec2-powercycle.zip
-            ./sh/lambda-invoke-function.sh --function ec2-powercycle --dryrun true
+            ./sh/lambda-publish-version.sh
+            ./sh/lambda-update-alias.sh --function ec2-powercycle --alias LIVE
+            ./sh/iam-assume-role-and-release.sh  --function ec2-powercycle --alias LIVE
 
-  deploy-releases:
+  deploy-test:
     machine:
       image: ubuntu-2004:202010-01
     working_directory: ~/ec2-powercycle
@@ -48,20 +48,18 @@ workflows:
       - build
       - deploy-master:
           context:
+            - ec2-powercycle-test
             - ec2-powercycle-prod
           requires:
             - build
           filters:
             branches:
               only: master
-      - deploy-releases:
+      - deploy-test:
           context:
             - ec2-powercycle-test
           requires:
             - build
           filters:
-            #tags:
-            #  only: /release-.*/
             branches:
-              only: feature/UPPSF-3187-update-ec-2-powercycle-deploy-jobs-in-circle-ci
-              #ignore: /.*/
+              ignore: master
