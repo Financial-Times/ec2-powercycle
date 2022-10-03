@@ -40,6 +40,7 @@ jobs:
             ./sh/lambda-deploy-latest.sh --file ec2-powercycle.zip
             ./sh/lambda-invoke-function.sh --function ec2-powercycle --dryrun true
             ./sh/iam-assume-role-and-deploy.sh
+            ./sh/lambda-publish-version.sh
 
 workflows:
   version: 2
