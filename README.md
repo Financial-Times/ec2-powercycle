@@ -150,11 +150,12 @@ git push origin release-12
 
 ### Adding AWS credentials into Circleci
 
-To enable Circleci build job to deploy deployment package to Lambda the build job must be configured with AWS credentials.
+AWS credentials are already added to two different contexts _ec2-powercycle-test_ and _ec2-powercycle-prod_ as environment variables. The workflow invokes the corresponding context with its AWS credentials in order to deploy deployment package to Lambda.
 
-* Go to [Circleci Dashboad](https://circleci.com/dashboard) and click the cog icon associated with build job
-* Under the _Permissions_ category click _AWS Permissions_
-* Fill out _Access Key ID_ and _Secret Access Key_ fields
+To change credentials: 
+* Go to [Circleci Contexts](https://app.circleci.com/settings/organization/github/Financial-Times/contexts) and click on _ec2-powercycle-test_ or _ec2-powercycle-prod_
+* Delete the old environment variable
+* Create new environment variable
 
 ## Identity and Access Management policy
 

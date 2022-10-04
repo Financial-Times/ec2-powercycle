@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    docker: 
+    docker:
       - image: docker:stable-git
     working_directory: ~/ec2-powercycle
     steps:
@@ -10,6 +10,22 @@ jobs:
           name: Change permissions on the file
           command: chmod 755 sh/*.sh
 
+  deploy-release:
+    machine:
+      image: ubuntu-2004:202010-01
+    working_directory: ~/ec2-powercycle
+    environment:
+      AWS_DEFAULT_REGION: eu-west-1
+      AWS_LAMBDA_FUNCTION: ec2-powercycle
+    steps:
+      - checkout
+      - run:
+          command: |
+            ./sh/package.sh
+            ./sh/lambda-deploy-latest.sh --file ec2-powercycle.zip
+            ./sh/lambda-publish-version.sh
+            ./sh/lambda-update-alias.sh --function ec2-powercycle --alias LIVE
+
   deploy-master:
     machine:
       image: ubuntu-2004:202010-01
@@ -17,7 +33,20 @@ jobs:
     environment:
       AWS_DEFAULT_REGION: eu-west-1
       AWS_LAMBDA_FUNCTION: ec2-powercycle
-      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev 
+    steps:
+      - checkout
+      - run:
+          command: |
+            ./sh/lambda-publish-version.sh
+            ./sh/lambda-update-alias.sh --function ec2-powercycle --alias LIVE
+
+  deploy-test:
+    machine:
+      image: ubuntu-2004:202010-01
+    working_directory: ~/ec2-powercycle
+    environment:
+      AWS_DEFAULT_REGION: eu-west-1
+      AWS_LAMBDA_FUNCTION: ec2-powercycle
     steps:
       - checkout
       - run:
@@ -25,39 +54,35 @@ jobs:
             ./sh/package.sh
             ./sh/lambda-deploy-latest.sh --file ec2-powercycle.zip
             ./sh/lambda-invoke-function.sh --function ec2-powercycle --dryrun true
-            ./sh/iam-assume-role-and-deploy.sh
 
-  deploy-releases:
-    machine:
-      image: ubuntu-2004:202010-01
-    working_directory: ~/ec2-powercycle
-    environment:
-      AWS_DEFAULT_REGION: eu-west-1
-      AWS_LAMBDA_FUNCTION: ec2-powercycle
-      AWS_CROSS_ACCCOUNT_ACCESS_ARN: arn:aws:iam::371548805176:role/circleci-to-ec2powercycle-lambda.infraprod-to-infradev 
-    steps:
-      - checkout
-      - run:
-          command: |
-            ./sh/lambda-publish-version.sh
-            ./sh/lambda-update-alias.sh --function ec2-powercycle --alias LIVE
-            ./sh/iam-assume-role-and-release.sh  --function ec2-powercycle --alias LIVE
 workflows:
   version: 2
   build-and-deploy:
     jobs:
       - build
-      - deploy-master:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
-      - deploy-releases:
+#      - deploy-test:
+#          context:
+#            - ec2-powercycle-test
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              ignore: master
+#      - deploy-master:
+#          context:
+#            - ec2-powercycle-test
+#          requires:
+#            - build
+#          filters:
+#            branches:
+#              only: master
+      - deploy-release:
+          context:
+            - ec2-powercycle-test
           requires:
             - build
           filters:
             tags:
-              only: /release-.*/
+              only: /test-.*/
             branches:
               ignore: /.*/
