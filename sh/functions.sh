@@ -5,17 +5,6 @@
 declare -A SETTINGS
 declare -A CLI_ARGS
 
-function assumeRole () {
-    JSON_OUT='role.json'
-    aws sts assume-role --role-arn "${CLI_ARGS[arn]}" --role-session-name "ec2-powercycle" > ${JSON_OUT} || exit 1
-    export AWS_ACCESS_KEY_ID="$(getKeyValueFromJSON ${JSON_OUT} AccessKeyId)"
-    echo -e "\e[31mAWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}\e[0m"
-    export AWS_SECRET_ACCESS_KEY="$(getKeyValueFromJSON ${JSON_OUT} SecretAccessKey)"
-    echo -e "\e[31mAWS_SECRET_ACCESS_KEY: ...not showing for reason because...\e[0m"
-    export AWS_SESSION_TOKEN="$(getKeyValueFromJSON ${JSON_OUT} SessionToken)"
-    echo -e "\e[31mAWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}\e[0m"    
-}
-
 function createLambdaAlias () {
     aws lambda create-alias --function-name $1 --name $2 --function-version $3 >/dev/null 
 }
@@ -84,7 +73,7 @@ function invokeFunction() {
     
     if [[ "${CLI_ARGS[dryrun]}" == "true" ]]; then
         echo "Dryrun on"
-        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --payload '{ "DryRun": "True" }' ${OUTPUT}
+        aws lambda invoke  --function-name ${SETTINGS[AWS_LAMBDA_FUNCTION]} --cli-binary-format raw-in-base64-out --payload '{ "DryRun": "True" }' ${OUTPUT}
         RTNCODE="$?"
         return ${RTNCODE}           
     else

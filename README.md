@@ -133,9 +133,31 @@ sudo docker run -it ec2-powercycle
 
 ### Release process
 
-Build pipeline currently has a single workflow with a mandatory `build` task and optionally one of two possible deployment tasks: [Development](https://github.com/Financial-Times/ec2-powercycle/blob/master/config.yml#L50-L55) (red lines) and [Production](https://github.com/Financial-Times/ec2-powercycle/blob/master/circle.yml#L56-L63) (green lines).
+Build pipeline currently has a single workflow with three possible tasks: `deploy-test`, `deploy-master` and `deploy-release`. 
 
-![Build pipeline](https://github.com/Financial-Times/ec2-powercycle/raw/master/doc/ServerlessPipelineforAWSLambda.png)
+```mermaid
+sequenceDiagram
+    autonumber
+    Note right of developer: deploy-test
+    developer-->>github: git push feature/branch
+    Note right of CircleCI: Dev account
+    CircleCI-->>github: git clone feature/branch
+    CircleCI-->>AWS: Upload the function
+    CircleCI-->>AWS: Invoke the function in "dryRun" mode
+
+    Note right of developer: deploy-master
+    developer-->>github: merge pull request
+    CircleCI-->>AWS: Create version for the last uploaded function
+    CircleCI-->>AWS: Create alias(named LIVE) for that version
+
+    Note right of developer: deploy-release
+    developer-->>github: git push tag release-*
+    Note right of CircleCI: Prod account
+    CircleCI-->>github: git clone release-*
+    CircleCI-->>AWS: Upload the function
+    CircleCI-->>AWS: Create version for the last uploaded function
+    CircleCI-->>AWS: Create alias(named LIVE) for that version
+```
 
 The Development task is run every time the _master_ branch is updated. Development task creates a deployment package, deploys it to Lambda and invokes the function against DEV alias.
 
@@ -150,11 +172,12 @@ git push origin release-12
 
 ### Adding AWS credentials into Circleci
 
-To enable Circleci build job to deploy deployment package to Lambda the build job must be configured with AWS credentials.
+AWS credentials are already added to two different contexts _ec2-powercycle-test_ and _ec2-powercycle-prod_ as environment variables. The workflow invokes the corresponding context with its AWS credentials in order to deploy deployment package to Lambda.
 
-* Go to [Circleci Dashboad](https://circleci.com/dashboard) and click the cog icon associated with build job
-* Under the _Permissions_ category click _AWS Permissions_
-* Fill out _Access Key ID_ and _Secret Access Key_ fields
+To change credentials: 
+* Go to [Circleci Contexts](https://app.circleci.com/settings/organization/github/Financial-Times/contexts) and click on _ec2-powercycle-test_ or _ec2-powercycle-prod_
+* Delete the old environment variable
+* Create new environment variable
 
 ## Identity and Access Management policy
 
