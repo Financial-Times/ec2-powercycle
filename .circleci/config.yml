@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: docker:stable-git
+      - image: docker:25.0-git
     working_directory: ~/ec2-powercycle
     steps:
       - checkout
