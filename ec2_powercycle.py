@@ -85,7 +85,7 @@ def handle_auto_scaling_groups(dryrun):
     print("--- Start processing Auto Scaling Groups ")
     next_token = ''
     while next_token is not None:
-        if next_token is not '':
+        if next_token != '':
             describe_result = aws_scaling_client.describe_auto_scaling_groups(NextToken=next_token)
         else:
             describe_result = aws_scaling_client.describe_auto_scaling_groups()
