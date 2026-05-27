@@ -274,6 +274,9 @@ The following policy enables build and deployment job to update Lambda function,
 }
 ```
 
+To update the Lambda runtime during deployment, set `AWS_LAMBDA_RUNTIME` and allow
+`lambda:UpdateFunctionConfiguration` for the deployment credentials.
+
 ## Creating and scheduling Lambda function
 
 Once deployment package has been created we can create a Lambda function and use CloudWatch to set the function to run periodically.
@@ -287,7 +290,7 @@ Once deployment package has been created we can create a Lambda function and use
 
     * Name*: ec2-powercycle
     * Description: Optional description of the function
-    * Runtime*: Python 3.7
+    * Runtime*: Python 3.14
 
  1. In _Lambda function code_ section select _Upload a .ZIP file_ to upload ec2powercycle.zip package to Lambda
  1. In _Lambda function handler and role_ section set handler name _ec2_powercycle.handler_
