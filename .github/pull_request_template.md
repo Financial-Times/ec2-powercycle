@@ -25,5 +25,16 @@ _Is there a better library for doing x_
 - [ ] Breaking change
 - [ ] Minor change (e.g. fixing a typo, adding config)
 
+## DoD - Ensure all relevant tasks are completed before marking this PR as "Ready for review"
+
+- [ ] Test coverage is not significantly decreased
+- [ ] All PR checks have passed
+- [ ] Changes are deployed on dev before asking for review
+- [ ] Documentations remains up-to-date
+  - [ ] OpenAPI definition file is updated
+  - [ ] README file is updated
+  - [ ] Documentation is updated in upp-docs and upp-public-docs
+  - [ ] Architecture diagrams are updated
+
 ___
 This Pull Request follows the rules described in our [Pull Requests Guide](https://github.com/Financial-Times/upp-docs/tree/master/guides/pr-guide)
