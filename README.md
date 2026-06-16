@@ -174,10 +174,7 @@ git push origin release-12
 
 AWS credentials are already added to two different contexts _ec2-powercycle-test_ and _ec2-powercycle-prod_ as environment variables. The workflow invokes the corresponding context with its AWS credentials in order to deploy deployment package to Lambda.
 
-To change credentials: 
-* Go to [Circleci Contexts](https://app.circleci.com/settings/organization/github/Financial-Times/contexts) and click on _ec2-powercycle-test_ or _ec2-powercycle-prod_
-* Delete the old environment variable
-* Create new environment variable
+The credentials have expiration period and the CI pipeline might fail to run. To rotate the credentials follow [Key Rotation](https://financialtimes.atlassian.net/wiki/spaces/CONTENT/pages/3071675350/Key+Rotation#KeyRotation-upp-circleci-to-ec2powercycle-lambda-prod) guide for upp-circleci-to-ec2powercycle-lambda-[prod|test].
 
 ## Identity and Access Management policy
 
